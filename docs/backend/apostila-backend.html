@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodHub Backend — Apostila Completa</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🍔</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* ═══════ TECH DARK THEME (from themes.json) ═══════ */
+:root {
+  --primary: #58a6ff;
+  --accent: #3fb950;
+  --secondary: #f0883e;
+  --text: #e6edf3;
+  --background: #0d1117;
+  --surface: #161b22;
+  --border-color: #30363d;
+  --border-accent: #58a6ff33;
+  --callout-info: #58a6ff22;
+  --callout-warning: #f0883e22;
+  --callout-success: #3fb95022;
+  --callout-danger: #f8514922;
+  --glow-primary: 0 0 20px #58a6ff44;
+  --glow-accent: 0 0 20px #3fb95044;
+  --gradient-primary: linear-gradient(135deg, #58a6ff, #3fb950);
+  --code-bg: #1c2128;
+  --code-border: #30363d;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+  --radius: 8px;
+  --transition: 0.25s ease;
+}
+
+/* ═══════ RESET & BASE ═══════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+::selection { background: #58a6ff44; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: var(--font-body);
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════ LAYOUT ═══════ */
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ═══════ SIDEBAR NAV ═══════ */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 24px 0;
+  transition: transform var(--transition);
+}
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 12px;
+}
+.sidebar-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sidebar-header .subtitle {
+  font-size: 0.75rem;
+  color: #8b949e;
+  margin-top: 4px;
+}
+.nav-section {
+  padding: 8px 12px;
+}
+.nav-section summary {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-section summary:hover { color: var(--text); }
+.nav-section summary::before {
+  content: '▸';
+  font-size: 0.7rem;
+  transition: transform var(--transition);
+}
+.nav-section[open] summary::before { transform: rotate(90deg); }
+.nav-link {
+  display: block;
+  padding: 5px 8px 5px 24px;
+  font-size: 0.82rem;
+  color: #8b949e;
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  line-height: 1.5;
+}
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--callout-info);
+}
+
+/* ═══════ MAIN CONTENT ═══════ */
+.main-content {
+  margin-left: 280px;
+  flex: 1;
+  min-width: 0;
+}
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ═══════ HERO ═══════ */
+.hero {
+  text-align: center;
+  padding: 60px 0 48px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 48px;
+}
+.hero-icon {
+  width: 80px; height: 80px;
+  margin: 0 auto 24px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.hero .lead {
+  font-size: 1.15rem;
+  color: #8b949e;
+  margin-top: 12px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.badge-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.badge {
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: #8b949e;
+}
+.badge.blue { border-color: #58a6ff44; color: var(--primary); }
+.badge.green { border-color: #3fb95044; color: var(--accent); }
+.badge.orange { border-color: #f0883e44; color: var(--secondary); }
+
+/* ═══════ TLDR BOX ═══════ */
+.tldr {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 40px;
+}
+.tldr h3 {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+.tldr ul { list-style: none; }
+.tldr li {
+  padding: 3px 0;
+  font-size: 0.92rem;
+  color: #c9d1d9;
+}
+.tldr li::before {
+  content: '→ ';
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ═══════ PHASE SECTIONS ═══════ */
+.phase {
+  margin-bottom: 64px;
+  scroll-margin-top: 24px;
+}
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 28px;
+}
+.phase-number {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  min-width: 56px;
+}
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+.phase-subtitle {
+  font-size: 0.85rem;
+  color: #8b949e;
+  margin-top: 2px;
+}
+
+/* ═══════ SECTION HEADINGS ═══════ */
+h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 32px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 24px 0 10px;
+}
+
+/* ═══════ PARAGRAPHS ═══════ */
+p {
+  margin-bottom: 14px;
+  color: #c9d1d9;
+  font-size: 0.95rem;
+}
+strong { color: var(--text); font-weight: 600; }
+
+/* ═══════ LISTS ═══════ */
+ul, ol {
+  margin: 10px 0 16px 20px;
+  color: #c9d1d9;
+  font-size: 0.95rem;
+}
+li { margin-bottom: 4px; }
+li code { font-size: 0.85rem; }
+
+/* ═══════ TABLES ═══════ */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+thead {
+  background: var(--surface);
+}
+th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  color: var(--primary);
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-color);
+  color: #c9d1d9;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #161b2288; }
+
+/* ═══════ CODE BLOCKS ═══════ */
+code {
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary);
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  overflow-x: auto;
+  margin: 14px 0 20px;
+  position: relative;
+}
+pre code {
+  background: none;
+  padding: 0;
+  color: #c9d1d9;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+.code-label {
+  position: absolute;
+  top: 0; right: 0;
+  font-family: var(--font-code);
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  background: var(--border-color);
+  color: #8b949e;
+  border-radius: 0 var(--radius) 0 var(--radius);
+}
+/* Syntax colors */
+.kw { color: #ff7b72; }
+.str { color: #a5d6ff; }
+.cm { color: #8b949e; font-style: italic; }
+.fn { color: #d2a8ff; }
+.ann { color: #ffa657; }
+.typ { color: #79c0ff; }
+.num { color: #79c0ff; }
+
+/* ═══════ CALLOUTS ═══════ */
+.callout {
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 16px 0 20px;
+  border: 1px solid;
+  font-size: 0.9rem;
+}
+.callout-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.callout.info {
+  background: var(--callout-info);
+  border-color: #58a6ff44;
+}
+.callout.info .callout-title { color: var(--primary); }
+.callout.warning {
+  background: var(--callout-warning);
+  border-color: #f0883e44;
+}
+.callout.warning .callout-title { color: var(--secondary); }
+.callout.success {
+  background: var(--callout-success);
+  border-color: #3fb95044;
+}
+.callout.success .callout-title { color: var(--accent); }
+.callout.danger {
+  background: var(--callout-danger);
+  border-color: #f8514944;
+}
+.callout.danger .callout-title { color: #f85149; }
+
+/* ═══════ CARDS ═══════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--glow-primary);
+}
+.card-icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+.card h5 {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.card p {
+  font-size: 0.82rem;
+  color: #8b949e;
+  margin-bottom: 0;
+}
+
+/* ═══════ INTERVIEW Q&A ═══════ */
+.interview-section {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 32px 0;
+}
+.interview-section h4 {
+  color: var(--secondary);
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+.qa { margin-bottom: 16px; }
+.qa:last-child { margin-bottom: 0; }
+.qa-question {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.qa-answer {
+  color: #8b949e;
+  font-size: 0.87rem;
+  line-height: 1.65;
+  padding-left: 14px;
+  border-left: 2px solid var(--border-color);
+}
+
+/* ═══════ SVG DIAGRAMS ═══════ */
+.diagram-wrapper {
+  margin: 20px 0 24px;
+  text-align: center;
+}
+.diagram-wrapper svg {
+  max-width: 100%;
+  height: auto;
+}
+.diagram-caption {
+  font-size: 0.78rem;
+  color: #8b949e;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ═══════ SEPARATOR ═══════ */
+.phase-divider {
+  border: none;
+  height: 1px;
+  background: var(--gradient-primary);
+  margin: 48px 0;
+  opacity: 0.3;
+}
+
+/* ═══════ FOOTER ═══════ */
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 48px;
+  font-size: 0.82rem;
+  color: #484f58;
+}
+
+/* ═══════ MOBILE NAV ═══════ */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 200;
+  width: 40px; height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.mobile-toggle svg { stroke: var(--text); }
+
+/* ═══════ RESPONSIVE ═══════ */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px #00000088; }
+  .main-content { margin-left: 0; }
+  .content-container { padding: 32px 18px 60px; }
+  .mobile-toggle { display: flex; }
+  .hero h1 { font-size: 2rem; }
+  .phase-number { font-size: 1.8rem; }
+}
+
+/* ═══════ PRINT ═══════ */
+@media print {
+  .sidebar, .mobile-toggle { display: none; }
+  .main-content { margin-left: 0; }
+  body { background: #fff; color: #000; }
+  .hero h1, .phase-number { -webkit-text-fill-color: #0969da; }
+  pre { border: 1px solid #ccc; }
+  .callout { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Nav Toggle -->
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+</button>
+
+<div class="page-wrapper">
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SIDEBAR NAVIGATION -->
+<!-- ═══════════════════════════════════════════════ -->
+<nav class="sidebar" role="navigation" aria-label="Navegação das fases">
+  <div class="sidebar-header">
+    <h2>FoodHub Backend</h2>
+    <div class="subtitle">Apostila Completa · 11 Fases</div>
+  </div>
+
+  <details class="nav-section" open>
+    <summary>Fase 00 · Visão Geral</summary>
+    <a href="#fase-00" class="nav-link">Introdução à Fase</a>
+    <a href="#f00-microservicos" class="nav-link">Microserviços do Sistema</a>
+    <a href="#f00-diagrama" class="nav-link">Diagrama de Arquitetura</a>
+    <a href="#f00-sync-async" class="nav-link">Síncrono vs Assíncrono</a>
+    <a href="#f00-stack" class="nav-link">Stack Tecnológica</a>
+    <a href="#f00-hexagonal" class="nav-link">Arquitetura Hexagonal</a>
+    <a href="#f00-pacotes" class="nav-link">Estrutura de Pacotes</a>
+    <a href="#f00-solid" class="nav-link">SOLID Aplicado</a>
+    <a href="#f00-adrs" class="nav-link">ADRs — Decisões</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 01 · Fundação</summary>
+    <a href="#fase-01" class="nav-link">Order Service do Zero</a>
+    <a href="#f01-dominio" class="nav-link">Camada de Domínio</a>
+    <a href="#f01-status" class="nav-link">OrderStatus — Máquina de Estados</a>
+    <a href="#f01-aggregate" class="nav-link">Order — Aggregate Root</a>
+    <a href="#f01-application" class="nav-link">Use Case (Application Service)</a>
+    <a href="#f01-controller" class="nav-link">REST Controller</a>
+    <a href="#f01-dtos" class="nav-link">DTOs com Records</a>
+    <a href="#f01-problemdetail" class="nav-link">ProblemDetail (RFC 7807)</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 02 · Persistência</summary>
+    <a href="#fase-02" class="nav-link">JPA &amp; Hibernate 6</a>
+    <a href="#f02-n1" class="nav-link">Problema N+1</a>
+    <a href="#f02-solucoes-n1" class="nav-link">3 Soluções para N+1</a>
+    <a href="#f02-transactions" class="nav-link">Transações em Profundidade</a>
+    <a href="#f02-specification" class="nav-link">Specification Pattern</a>
+    <a href="#f02-auditoria" class="nav-link">Auditoria Automática</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 03 · Segurança</summary>
+    <a href="#fase-03" class="nav-link">Spring Security 6 + JWT</a>
+    <a href="#f03-jwt" class="nav-link">JwtService — Geração/Validação</a>
+    <a href="#f03-filter" class="nav-link">SecurityConfig &amp; Filter</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 04 · Mensageria</summary>
+    <a href="#fase-04" class="nav-link">Apache Kafka</a>
+    <a href="#f04-events" class="nav-link">Eventos de Domínio</a>
+    <a href="#f04-producer" class="nav-link">Producer (Porta + Adaptador)</a>
+    <a href="#f04-dlq" class="nav-link">Retry &amp; Dead Letter Queue</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 05 · Testes</summary>
+    <a href="#fase-05" class="nav-link">Testes Automatizados</a>
+    <a href="#f05-piramide" class="nav-link">Pirâmide de Testes</a>
+    <a href="#f05-unit" class="nav-link">Unitários — Domínio</a>
+    <a href="#f05-mockito" class="nav-link">Service com Mockito</a>
+    <a href="#f05-testcontainers" class="nav-link">E2E com Testcontainers</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 06 · Documentação</summary>
+    <a href="#fase-06" class="nav-link">SpringDoc OpenAPI</a>
+    <a href="#f06-swagger" class="nav-link">Configuração &amp; OpenAPI Bean</a>
+    <a href="#f06-annotations" class="nav-link">Anotações nos Controllers</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 07 · Docker</summary>
+    <a href="#fase-07" class="nav-link">Containerização</a>
+    <a href="#f07-dockerfile" class="nav-link">Dockerfile Multi-Stage</a>
+    <a href="#f07-compose" class="nav-link">Docker Compose</a>
+    <a href="#f07-health" class="nav-link">Health Checks</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 08 · Spring Cloud</summary>
+    <a href="#fase-08" class="nav-link">Gateway, Eureka &amp; Config</a>
+    <a href="#f08-feign" class="nav-link">OpenFeign Declarativo</a>
+    <a href="#f08-resilience" class="nav-link">Resilience4j — Circuit Breaker</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 09 · CI/CD</summary>
+    <a href="#fase-09" class="nav-link">Pipeline GitHub Actions</a>
+    <a href="#f09-quality" class="nav-link">JaCoCo &amp; SpotBugs</a>
+    <a href="#f09-gitflow" class="nav-link">Git Flow Simplificado</a>
+  </details>
+  <details class="nav-section">
+    <summary>Fase 10 · Observabilidade</summary>
+    <a href="#fase-10" class="nav-link">Actuator + Stack</a>
+    <a href="#f10-red" class="nav-link">Padrão RED</a>
+    <a href="#f10-metrics" class="nav-link">Custom Metrics</a>
+    <a href="#f10-tracing" class="nav-link">Distributed Tracing</a>
+    <a href="#f10-checklist" class="nav-link">Mapa de Portas Final</a>
+  </details>
+  <details class="nav-section">
+    <summary>Resumo Final</summary>
+    <a href="#checklist-final" class="nav-link">Checklist de Competências</a>
+  </details>
+</nav>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- MAIN CONTENT -->
+<!-- ═══════════════════════════════════════════════ -->
+<main class="main-content">
+<div class="content-container">
+
+<!-- ═══════ HERO ═══════ -->
+<header class="hero">
+  <svg class="hero-icon" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="72" height="72" rx="16" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+    <path d="M24 52V28l16-8 16 8v24l-16 8-16-8z" fill="none" stroke="#58a6ff" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M24 28l16 8 16-8" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round" opacity="0.5"/>
+    <path d="M40 36v24" stroke="#3fb950" stroke-width="2"/>
+    <circle cx="40" cy="32" r="3" fill="#3fb950"/>
+    <circle cx="28" cy="40" r="2" fill="#58a6ff" opacity="0.6"/>
+    <circle cx="52" cy="40" r="2" fill="#58a6ff" opacity="0.6"/>
+  </svg>
+  <h1>FoodHub Backend</h1>
+  <p class="lead">Apostila completa — da arquitetura hexagonal ao deploy em produção com observabilidade. 11 fases, Java 21, Spring Boot 3.5 e Spring Cloud.</p>
+  <div class="badge-row">
+    <span class="badge blue">Java 21 LTS</span>
+    <span class="badge green">Spring Boot 3.5</span>
+    <span class="badge orange">Spring Cloud 2025</span>
+    <span class="badge">PostgreSQL 16</span>
+    <span class="badge">Kafka</span>
+    <span class="badge">Docker</span>
+    <span class="badge">GitHub Actions</span>
+  </div>
+</header>
+
+<!-- ═══════ TLDR ═══════ -->
+<aside class="tldr">
+  <h3>TL;DR — O que você vai dominar</h3>
+  <ul>
+    <li>Arquitetura Hexagonal (Ports &amp; Adapters) com DDD em microserviços</li>
+    <li>REST APIs com validação, paginação e ProblemDetail (RFC 7807)</li>
+    <li>JPA/Hibernate 6 avançado — N+1, Specifications, Optimistic Locking</li>
+    <li>Spring Security 6 com JWT stateless e @PreAuthorize</li>
+    <li>Mensageria com Apache Kafka — Producer, Consumer, DLQ</li>
+    <li>Testes em todas as camadas — JUnit 5, Mockito, Testcontainers</li>
+    <li>Docker multi-stage + Docker Compose com health checks</li>
+    <li>Spring Cloud — Eureka, Gateway, Config Server, OpenFeign, Resilience4j</li>
+    <li>CI/CD com GitHub Actions, JaCoCo e SpotBugs</li>
+    <li>Observabilidade — Actuator, Prometheus, Grafana, Zipkin</li>
+  </ul>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 00 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-00">
+  <div class="phase-header">
+    <div class="phase-number">00</div>
+    <div>
+      <div class="phase-title">Visão Geral, Arquitetura e Decisões Globais</div>
+      <div class="phase-subtitle">Pensar como arquiteto antes de escrever código</div>
+    </div>
+  </div>
+
+  <h3 id="f00-microservicos">O Sistema FoodHub</h3>
+  <p><strong>FoodHub</strong> é uma plataforma de pedidos de comida desenhada para exercitar competências enterprise: múltiplas entidades com relacionamentos reais, comunicação síncrona e assíncrona entre serviços, segurança, e eventos de domínio.</p>
+
+  <h4>Microserviços de Negócio</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Microserviço</th><th>Porta</th><th>Responsabilidade</th><th>Banco</th></tr></thead>
+      <tbody>
+        <tr><td><strong>order-service</strong></td><td>8081</td><td>Criação, consulta e gerenciamento de pedidos</td><td><code>foodhub_orders</code></td></tr>
+        <tr><td><strong>restaurant-service</strong></td><td>8082</td><td>Cadastro de restaurantes, cardápios e itens</td><td><code>foodhub_restaurants</code></td></tr>
+        <tr><td><strong>payment-service</strong></td><td>8083</td><td>Processamento (simulado) de pagamentos</td><td><code>foodhub_payments</code></td></tr>
+        <tr><td><strong>notification-service</strong></td><td>8084</td><td>Envio de notificações (via evento Kafka)</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Bounded Contexts (DDD)</div>
+    <p>Cada serviço é um <strong>bounded context</strong> diferente: Order, Restaurant, Payment, Notification. Um "Item" no contexto de Restaurante (menu item com preço) é diferente de um "Item" no contexto de Pedido (item pedido com quantidade e subtotal).</p>
+  </div>
+
+  <h4>Serviços de Infraestrutura</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Serviço</th><th>Porta</th><th>Responsabilidade</th></tr></thead>
+      <tbody>
+        <tr><td><strong>api-gateway</strong></td><td>8080</td><td>Spring Cloud Gateway — ponto único de entrada</td></tr>
+        <tr><td><strong>config-server</strong></td><td>8888</td><td>Spring Cloud Config — configuração centralizada</td></tr>
+        <tr><td><strong>discovery-server</strong></td><td>8761</td><td>Eureka — registro e descoberta de serviços</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SVG: Architecture Diagram -->
+  <h3 id="f00-diagrama">Diagrama de Arquitetura</h3>
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <!-- Background -->
+      <rect width="720" height="520" fill="#0d1117" rx="8"/>
+
+      <!-- Client -->
+      <rect x="290" y="20" width="140" height="44" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="360" y="47" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">Cliente / App</text>
+
+      <!-- Arrow Client -> Gateway -->
+      <line x1="360" y1="64" x2="360" y2="100" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="375" y="86" fill="#8b949e" font-size="10">:8080</text>
+
+      <!-- Gateway -->
+      <rect x="270" y="100" width="180" height="48" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="360" y="120" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="700">API GATEWAY</text>
+      <text x="360" y="136" text-anchor="middle" fill="#8b949e" font-size="10">Spring Cloud Gateway</text>
+
+      <!-- Arrows Gateway -> Services -->
+      <line x1="310" y1="148" x2="160" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="360" y1="148" x2="360" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <line x1="410" y1="148" x2="560" y2="200" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Order Service -->
+      <rect x="70" y="200" width="180" height="60" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="160" y="224" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">order-service</text>
+      <text x="160" y="244" text-anchor="middle" fill="#8b949e" font-size="10">:8081 · PostgreSQL</text>
+
+      <!-- Restaurant Service -->
+      <rect x="270" y="200" width="180" height="60" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="360" y="224" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">restaurant-service</text>
+      <text x="360" y="244" text-anchor="middle" fill="#8b949e" font-size="10">:8082 · PostgreSQL</text>
+
+      <!-- Payment Service -->
+      <rect x="470" y="200" width="180" height="60" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="560" y="224" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">payment-service</text>
+      <text x="560" y="244" text-anchor="middle" fill="#8b949e" font-size="10">:8083 · PostgreSQL</text>
+
+      <!-- OpenFeign arrow -->
+      <line x1="250" y1="225" x2="270" y2="225" stroke="#f0883e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowOrange)"/>
+      <text x="260" y="218" text-anchor="middle" fill="#f0883e" font-size="9">Feign</text>
+
+      <!-- Kafka Broker -->
+      <rect x="230" y="320" width="260" height="52" rx="8" fill="#161b22" stroke="#f0883e" stroke-width="2"/>
+      <text x="360" y="344" text-anchor="middle" fill="#f0883e" font-size="13" font-weight="700">Apache Kafka</text>
+      <text x="360" y="360" text-anchor="middle" fill="#8b949e" font-size="10">Broker de Eventos · :9092</text>
+
+      <!-- Arrows to Kafka -->
+      <line x1="160" y1="260" x2="280" y2="320" stroke="#f0883e" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrowOrange)"/>
+      <line x1="560" y1="260" x2="440" y2="320" stroke="#f0883e" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrowOrange)"/>
+
+      <!-- Notification Service -->
+      <rect x="270" y="420" width="180" height="52" rx="8" fill="#161b22" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="360" y="444" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="700">notification-service</text>
+      <text x="360" y="460" text-anchor="middle" fill="#8b949e" font-size="10">:8084 · Kafka Consumer</text>
+
+      <!-- Arrow Kafka -> Notification -->
+      <line x1="360" y1="372" x2="360" y2="420" stroke="#d2a8ff" stroke-width="1.2" marker-end="url(#arrowPurple)"/>
+
+      <!-- Infra Services -->
+      <rect x="18" y="340" width="160" height="44" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="98" y="358" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="600">Config Server :8888</text>
+      <text x="98" y="372" text-anchor="middle" fill="#484f58" font-size="9">Spring Cloud Config</text>
+
+      <rect x="542" y="340" width="160" height="44" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="622" y="358" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="600">Eureka :8761</text>
+      <text x="622" y="372" text-anchor="middle" fill="#484f58" font-size="9">Service Discovery</text>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#58a6ff"/>
+        </marker>
+        <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0883e"/>
+        </marker>
+        <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#d2a8ff"/>
+        </marker>
+        <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#3fb950"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="diagram-caption">Arquitetura FoodHub — Gateway centraliza entrada; Kafka faz comunicação assíncrona entre serviços</div>
+  </div>
+
+  <h4 id="f00-sync-async">Comunicação Síncrona vs Assíncrona</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Tipo</th><th>Quando usar</th><th>Exemplo</th><th>Tecnologia</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Síncrona (REST)</strong></td><td>O chamador precisa da resposta para continuar</td><td>order-service valida itens no restaurant-service</td><td>OpenFeign</td></tr>
+        <tr><td><strong>Assíncrona (Evento)</strong></td><td>É uma consequência que não bloqueia</td><td>Após criar pedido, payment-service processa</td><td>Apache Kafka</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title">✅ Regra Prática</div>
+    <p>Se o fluxo <strong>para</strong> sem a resposta → síncrono. Se é uma ação decorrente que pode acontecer depois → assíncrono.</p>
+  </div>
+
+  <h3 id="f00-stack">Stack Tecnológica Completa</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Categoria</th><th>Tecnologia</th><th>Versão</th><th>Justificativa</th></tr></thead>
+      <tbody>
+        <tr><td>Linguagem</td><td><strong>Java</strong></td><td>21 (LTS)</td><td>Records, sealed classes, pattern matching, virtual threads</td></tr>
+        <tr><td>Framework</td><td><strong>Spring Boot</strong></td><td>3.5.x</td><td>Última versão estável; suporta Java 21 nativamente</td></tr>
+        <tr><td>Build</td><td><strong>Maven</strong></td><td>3.9+</td><td>Mais usado em projetos enterprise no Brasil</td></tr>
+        <tr><td>Banco</td><td><strong>PostgreSQL</strong></td><td>16+</td><td>O banco relacional mais pedido nas vagas</td></tr>
+        <tr><td>ORM</td><td><strong>Spring Data JPA</strong></td><td>Hibernate 6</td><td>Padrão da indústria</td></tr>
+        <tr><td>Migrations</td><td><strong>Flyway</strong></td><td>gerenciado</td><td>Versionamento de schema do banco</td></tr>
+        <tr><td>Segurança</td><td><strong>Spring Security 6 + JJWT</strong></td><td>6.x / 0.12.x</td><td>JWT stateless para microserviços</td></tr>
+        <tr><td>Mensageria</td><td><strong>Apache Kafka</strong></td><td>3.x</td><td>Broker de eventos mais pedido</td></tr>
+        <tr><td>Gateway</td><td><strong>Spring Cloud Gateway</strong></td><td>2025.0.x</td><td>API Gateway reativo</td></tr>
+        <tr><td>Discovery</td><td><strong>Eureka Server</strong></td><td>2025.0.x</td><td>Service discovery mais comum</td></tr>
+        <tr><td>Resiliência</td><td><strong>Resilience4j</strong></td><td>2.x</td><td>Circuit breaker, retry, rate limiter</td></tr>
+        <tr><td>Docs</td><td><strong>SpringDoc OpenAPI</strong></td><td>2.8.x</td><td>Swagger UI automático</td></tr>
+        <tr><td>Testes</td><td><strong>JUnit 5 + Mockito + Testcontainers</strong></td><td>gerenciado</td><td>Stack padrão enterprise</td></tr>
+        <tr><td>Container</td><td><strong>Docker + Compose</strong></td><td>—</td><td>Containerização padrão</td></tr>
+        <tr><td>CI/CD</td><td><strong>GitHub Actions</strong></td><td>—</td><td>Integração nativa com GitHub</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="f00-hexagonal">Arquitetura Hexagonal (Ports &amp; Adapters)</h3>
+  <p>O domínio (hexágono interno) não conhece o mundo externo. Toda comunicação passa por <strong>portas</strong> (interfaces) e <strong>adaptadores</strong> (implementações concretas). Isso permite trocar banco, broker ou framework web sem alterar lógica de negócio.</p>
+
+  <!-- SVG: Hexagonal Architecture -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="600" height="400" fill="#0d1117" rx="8"/>
+
+      <!-- Hexagon (domain) -->
+      <polygon points="300,80 400,130 400,230 300,280 200,230 200,130" fill="none" stroke="#3fb950" stroke-width="2.5"/>
+      <text x="300" y="160" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="700">DOMAIN</text>
+      <text x="300" y="180" text-anchor="middle" fill="#8b949e" font-size="10">Entidades · Value Objects</text>
+      <text x="300" y="195" text-anchor="middle" fill="#8b949e" font-size="10">Regras de Negócio</text>
+
+      <!-- Application ring -->
+      <rect x="150" y="100" width="300" height="180" rx="12" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="300" y="260" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600">APPLICATION (Use Cases + Ports)</text>
+
+      <!-- Adapters IN -->
+      <rect x="20" y="120" width="110" height="50" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="75" y="143" text-anchor="middle" fill="#f0883e" font-size="10" font-weight="600">adapter.in</text>
+      <text x="75" y="158" text-anchor="middle" fill="#8b949e" font-size="9">Controller · Filter</text>
+      <line x1="130" y1="145" x2="196" y2="155" stroke="#f0883e" stroke-width="1.2" marker-end="url(#arrowOrange)"/>
+
+      <!-- Adapters OUT -->
+      <rect x="470" y="120" width="115" height="50" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="527" y="143" text-anchor="middle" fill="#f0883e" font-size="10" font-weight="600">adapter.out</text>
+      <text x="527" y="158" text-anchor="middle" fill="#8b949e" font-size="9">JPA · Kafka · Feign</text>
+      <line x1="454" y1="155" x2="470" y2="145" stroke="#f0883e" stroke-width="1.2" marker-end="url(#arrowOrange)"/>
+
+      <!-- Port labels -->
+      <text x="170" y="144" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="600">PORT IN</text>
+      <text x="430" y="144" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="600">PORT OUT</text>
+
+      <!-- Dependency Rule -->
+      <text x="300" y="340" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">Regra de Dependência</text>
+      <text x="300" y="360" text-anchor="middle" fill="#8b949e" font-size="10">adapter.in → application → domain ← adapter.out</text>
+      <text x="300" y="378" text-anchor="middle" fill="#58a6ff" font-size="10">A dependência sempre aponta para DENTRO do hexágono</text>
+    </svg>
+    <div class="diagram-caption">Portas são interfaces em application/port/ — Adaptadores são implementações concretas em adapter/</div>
+  </div>
+
+  <h4 id="f00-pacotes">Estrutura de Pacotes</h4>
+  <pre><code><span class="cm">// Cada microserviço segue esta organização</span>
+order-service/
+├── domain/                     <span class="cm">// Hexágono interno — Java puro</span>
+│   ├── model/                  <span class="cm">// Entidades JPA, Value Objects</span>
+│   ├── event/                  <span class="cm">// Eventos de domínio (records)</span>
+│   └── exception/              <span class="cm">// Exceções de domínio</span>
+├── application/                <span class="cm">// Use Cases + Portas</span>
+│   ├── port/in/                <span class="cm">// O que o app sabe fazer</span>
+│   ├── port/out/               <span class="cm">// O que o app precisa</span>
+│   ├── usecase/                <span class="cm">// Orquestração</span>
+│   ├── dto/                    <span class="cm">// Records (request/response)</span>
+│   └── mapper/                 <span class="cm">// Entity ↔ DTO</span>
+└── adapter/                    <span class="cm">// Implementações concretas</span>
+    ├── in/web/                 <span class="cm">// Controllers, Filters, Security</span>
+    └── out/                    <span class="cm">// JPA, Kafka, Feign, Config</span></code></pre>
+
+  <h3 id="f00-solid">Princípios SOLID no Projeto</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">S</div>
+      <h5>Single Responsibility</h5>
+      <p>Controller (HTTP), Use Case (orquestração), Entity (regras de domínio), Repository (persistência) — cada classe com 1 razão para mudar.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">O</div>
+      <h5>Open/Closed</h5>
+      <p><code>OrderEventPublisher</code> (porta) pode ter novas implementações (Kafka, RabbitMQ, SNS) sem alterar o código que a usa.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">L</div>
+      <h5>Liskov Substitution</h5>
+      <p>Qualquer implementação de <code>OrderRepository</code> (JPA, in-memory) funciona sem quebrar o contrato.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">I</div>
+      <h5>Interface Segregation</h5>
+      <p>Portas separadas: <code>OrderEventPublisher</code> publica eventos, <code>OrderRepository</code> persiste pedidos.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">D</div>
+      <h5>Dependency Inversion</h5>
+      <p><code>OrderApplicationService</code> depende de abstrações (portas), não de <code>KafkaOrderEventPublisher</code> (concreto).</p>
+    </div>
+  </div>
+
+  <!-- ADRs -->
+  <h3 id="f00-adrs">Decisões Arquiteturais (ADRs)</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h5>ADR-001: Comunicação</h5>
+      <p>REST síncrono (OpenFeign) para queries; Kafka assíncrono para eventos. Consistência eventual para fluxos de eventos.</p>
+    </div>
+    <div class="card">
+      <h5>ADR-002: Database-per-Service</h5>
+      <p>PostgreSQL dedicado por serviço. Autonomia e isolamento. Sem JOINs cross-service; dados via eventos.</p>
+    </div>
+    <div class="card">
+      <h5>ADR-003: Flyway Migrations</h5>
+      <p>SQL versionado (V1__, V2__). Rastreabilidade e reprodutibilidade. <code>ddl-auto: validate</code>.</p>
+    </div>
+    <div class="card">
+      <h5>ADR-004: JWT Stateless</h5>
+      <p>Token self-contained; qualquer instância valida sem banco central. TTL fixo, sem revogação individual.</p>
+    </div>
+    <div class="card">
+      <h5>ADR-005: Hexagonal + DDD</h5>
+      <p>Domínio no centro; portas e adaptadores. Entidades JPA no domain/ por pragmatismo. Mais adotado em fintechs.</p>
+    </div>
+  </div>
+
+  <!-- Interview Q&A -->
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 00</h4>
+    <div class="qa">
+      <div class="qa-question">Explique comunicação síncrona vs assíncrona em microserviços.</div>
+      <div class="qa-answer">Síncrona (REST/Feign): o chamador bloqueia e espera — bom para queries que precisam de resultado imediato. Assíncrona (Kafka): publica evento e segue — bom para reações desacopladas. Trade-off: síncrona dá acoplamento temporal; assíncrona dá eventual consistency.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é Arquitetura Hexagonal e por que usar?</div>
+      <div class="qa-answer">Ports &amp; Adapters: domínio no centro, comunicação via portas (interfaces) e adaptadores (implementações). Benefício principal: testabilidade — domínio testável sem Spring/banco/Kafka. Benefício secundário: substituibilidade — trocar JPA por MongoDB exige apenas novo adaptador.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Por que Database-per-Service e não banco compartilhado?</div>
+      <div class="qa-answer">Autonomia (deploy independente), isolamento (migração de schema sem impactar outros), encapsulamento (dados acessíveis apenas via API). Trade-off: perda de transações distribuídas — use Saga ou Outbox.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Cite os 5 princípios SOLID com exemplos reais do projeto.</div>
+      <div class="qa-answer">S: OrderApplicationService coordena apenas pedidos. O: OrderEventPublisher aceita KafkaPublisher ou RabbitPublisher. L: qualquer OrderRepository funciona sem quebrar contrato. I: portas separadas por responsabilidade. D: service depende de interfaces (portas), não de implementações.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Qual a diferença entre DDD e microserviços?</div>
+      <div class="qa-answer">DDD é abordagem de modelagem (linguagem ubíqua, bounded contexts, entidades ricas). Microserviços é estilo arquitetural de deploy. DDD guia os limites de cada microserviço — cada bounded context tipicamente vira um serviço.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 01 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-01">
+  <div class="phase-header">
+    <div class="phase-number">01</div>
+    <div>
+      <div class="phase-title">Fundação: Order Service do Zero</div>
+      <div class="phase-subtitle">Spring Boot 3.5 · Java 21 · Rich Domain Model · Hexagonal</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">🚀</div><h5>Spring Boot 3.5</h5><p>Projeto inicializado com start.spring.io e Maven</p></div>
+    <div class="card"><div class="card-icon">📦</div><h5>Rich Domain Model</h5><p>Entidades JPA com lógica de negócio (DDD)</p></div>
+    <div class="card"><div class="card-icon">📐</div><h5>Java Records</h5><p>DTOs imutáveis como records — zero boilerplate</p></div>
+    <div class="card"><div class="card-icon">🔧</div><h5>ProblemDetail</h5><p>Erros HTTP padronizados (RFC 7807)</p></div>
+  </div>
+
+  <h3 id="f01-dominio">Camada de Domínio — Entidades Ricas</h3>
+
+  <h4 id="f01-status">OrderStatus — Máquina de Estados</h4>
+  <pre><code><span class="kw">public enum</span> <span class="typ">OrderStatus</span> {
+    <span class="str">PENDING</span>, <span class="str">CONFIRMED</span>, <span class="str">PREPARING</span>, <span class="str">READY</span>,
+    <span class="str">DELIVERING</span>, <span class="str">DELIVERED</span>, <span class="str">CANCELLED</span>;
+
+    <span class="kw">public boolean</span> <span class="fn">canTransitionTo</span>(<span class="typ">OrderStatus</span> target) {
+        <span class="kw">return switch</span> (<span class="kw">this</span>) {
+            <span class="kw">case</span> <span class="str">PENDING</span>     <span class="kw">-></span> target == <span class="str">CONFIRMED</span> || target == <span class="str">CANCELLED</span>;
+            <span class="kw">case</span> <span class="str">CONFIRMED</span>   <span class="kw">-></span> target == <span class="str">PREPARING</span> || target == <span class="str">CANCELLED</span>;
+            <span class="kw">case</span> <span class="str">PREPARING</span>   <span class="kw">-></span> target == <span class="str">READY</span>;
+            <span class="kw">case</span> <span class="str">READY</span>       <span class="kw">-></span> target == <span class="str">DELIVERING</span>;
+            <span class="kw">case</span> <span class="str">DELIVERING</span>  <span class="kw">-></span> target == <span class="str">DELIVERED</span>;
+            <span class="kw">default</span>         <span class="kw">-></span> <span class="kw">false</span>;
+        };
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f01-aggregate">Order — Aggregate Root</h4>
+  <pre><code><span class="ann">@Entity</span> <span class="ann">@Table</span>(name = <span class="str">"orders"</span>)
+<span class="kw">public class</span> <span class="typ">Order</span> <span class="kw">extends</span> <span class="typ">BaseEntity</span> {
+
+    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="typ">Long</span> customerId;
+
+    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="typ">Long</span> restaurantId;
+
+    <span class="ann">@Enumerated</span>(<span class="typ">EnumType</span>.<span class="str">STRING</span>)
+    <span class="kw">private</span> <span class="typ">OrderStatus</span> status;
+
+    <span class="ann">@OneToMany</span>(mappedBy = <span class="str">"order"</span>, cascade = <span class="typ">CascadeType</span>.<span class="str">ALL</span>, orphanRemoval = <span class="kw">true</span>)
+    <span class="kw">private</span> <span class="typ">List</span>&lt;<span class="typ">OrderItem</span>&gt; items = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">private</span> <span class="typ">BigDecimal</span> totalAmount;
+
+    <span class="cm">// Factory method — único ponto de criação</span>
+    <span class="kw">public static</span> <span class="typ">Order</span> <span class="fn">create</span>(<span class="typ">Long</span> customerId, <span class="typ">Long</span> restaurantId) {
+        <span class="typ">Order</span> order = <span class="kw">new</span> <span class="typ">Order</span>();
+        order.customerId = customerId;
+        order.restaurantId = restaurantId;
+        order.status = <span class="typ">OrderStatus</span>.<span class="str">PENDING</span>;
+        order.totalAmount = <span class="typ">BigDecimal</span>.<span class="str">ZERO</span>;
+        <span class="kw">return</span> order;
+    }
+
+    <span class="cm">// Regra de negócio vive na entidade (Rich Domain Model)</span>
+    <span class="kw">public void</span> <span class="fn">addItem</span>(<span class="typ">OrderItem</span> item) {
+        items.add(item);
+        item.setOrder(<span class="kw">this</span>);
+        recalculateTotal();
+    }
+
+    <span class="kw">public void</span> <span class="fn">transitionTo</span>(<span class="typ">OrderStatus</span> newStatus) {
+        <span class="kw">if</span> (!status.canTransitionTo(newStatus)) {
+            <span class="kw">throw new</span> <span class="typ">IllegalStateException</span>(
+                <span class="str">"Cannot transition from "</span> + status + <span class="str">" to "</span> + newStatus);
+        }
+        <span class="kw">this</span>.status = newStatus;
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Factory Method vs Construtor Público</div>
+    <p>O <code>Order.create()</code> é um <strong>factory method</strong>: controla a criação, garante invariantes (status sempre PENDING, total zero) e torna a intenção explícita. Construtor público permitiria criar Order em estado inválido.</p>
+  </div>
+
+  <h3 id="f01-application">Camada de Aplicação — Use Case</h3>
+  <pre><code><span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="ann">@Transactional</span>(readOnly = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="typ">OrderApplicationService</span> {
+
+    <span class="kw">private final</span> <span class="typ">OrderRepository</span> orderRepository;
+    <span class="kw">private final</span> <span class="typ">OrderMapper</span> mapper;
+
+    <span class="ann">@Transactional</span>
+    <span class="kw">public</span> <span class="typ">OrderResponse</span> <span class="fn">createOrder</span>(<span class="typ">CreateOrderRequest</span> request) {
+        <span class="typ">Order</span> order = <span class="typ">Order</span>.create(request.customerId(), request.restaurantId());
+        request.items().forEach(itemReq <span class="kw">-></span> {
+            <span class="typ">OrderItem</span> item = <span class="typ">OrderItem</span>.create(
+                itemReq.menuItemId(), itemReq.menuItemName(),
+                itemReq.quantity(), itemReq.unitPrice()
+            );
+            order.addItem(item);
+        });
+        <span class="kw">return</span> mapper.toResponse(orderRepository.save(order));
+    }
+
+    <span class="kw">public</span> <span class="typ">Page</span>&lt;<span class="typ">OrderResponse</span>&gt; <span class="fn">findAll</span>(<span class="typ">Pageable</span> pageable) {
+        <span class="kw">return</span> orderRepository.findAll(pageable).map(mapper::toResponse);
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f01-controller">REST Controller</h3>
+  <pre><code><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/orders"</span>)
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="typ">OrderController</span> {
+
+    <span class="kw">private final</span> <span class="typ">OrderApplicationService</span> service;
+
+    <span class="ann">@PostMapping</span>
+    <span class="kw">public</span> <span class="typ">ResponseEntity</span>&lt;<span class="typ">OrderResponse</span>&gt; <span class="fn">create</span>(
+            <span class="ann">@Valid</span> <span class="ann">@RequestBody</span> <span class="typ">CreateOrderRequest</span> request) {
+        <span class="typ">OrderResponse</span> response = service.createOrder(request);
+        <span class="kw">return</span> <span class="typ">ResponseEntity</span>.status(<span class="num">201</span>).body(response);
+    }
+
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> <span class="typ">Page</span>&lt;<span class="typ">OrderResponse</span>&gt; <span class="fn">list</span>(<span class="typ">Pageable</span> pageable) {
+        <span class="kw">return</span> service.findAll(pageable);
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f01-dtos">DTOs com Java Records</h4>
+  <pre><code><span class="kw">public record</span> <span class="typ">CreateOrderRequest</span>(
+    <span class="ann">@NotNull</span> <span class="typ">Long</span> customerId,
+    <span class="ann">@NotNull</span> <span class="typ">Long</span> restaurantId,
+    <span class="ann">@NotEmpty</span> <span class="typ">List</span>&lt;<span class="typ">OrderItemRequest</span>&gt; items
+) {}
+
+<span class="kw">public record</span> <span class="typ">OrderResponse</span>(
+    <span class="typ">Long</span> id, <span class="typ">Long</span> customerId, <span class="typ">Long</span> restaurantId,
+    <span class="typ">String</span> status, <span class="typ">BigDecimal</span> totalAmount,
+    <span class="typ">List</span>&lt;<span class="typ">OrderItemResponse</span>&gt; items,
+    <span class="typ">LocalDateTime</span> createdAt
+) {}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f01-problemdetail">Exception Handler — ProblemDetail (RFC 7807)</h4>
+  <pre><code><span class="ann">@RestControllerAdvice</span>
+<span class="kw">public class</span> <span class="typ">GlobalExceptionHandler</span> {
+
+    <span class="ann">@ExceptionHandler</span>(<span class="typ">OrderNotFoundException</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="typ">ProblemDetail</span> <span class="fn">handleNotFound</span>(<span class="typ">OrderNotFoundException</span> ex) {
+        <span class="typ">ProblemDetail</span> pd = <span class="typ">ProblemDetail</span>.forStatusAndDetail(
+            <span class="typ">HttpStatus</span>.<span class="str">NOT_FOUND</span>, ex.getMessage());
+        pd.setTitle(<span class="str">"Pedido não encontrado"</span>);
+        <span class="kw">return</span> pd;
+    }
+
+    <span class="ann">@ExceptionHandler</span>(<span class="typ">MethodArgumentNotValidException</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="typ">ProblemDetail</span> <span class="fn">handleValidation</span>(<span class="typ">MethodArgumentNotValidException</span> ex) {
+        <span class="typ">ProblemDetail</span> pd = <span class="typ">ProblemDetail</span>.forStatusAndDetail(
+            <span class="typ">HttpStatus</span>.<span class="str">BAD_REQUEST</span>, <span class="str">"Erro de validação"</span>);
+        pd.setProperty(<span class="str">"errors"</span>, ex.getFieldErrors().stream()
+            .map(fe <span class="kw">-></span> fe.getField() + <span class="str">": "</span> + fe.getDefaultMessage())
+            .toList());
+        <span class="kw">return</span> pd;
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 01</h4>
+    <div class="qa">
+      <div class="qa-question">Por que usar factory method em vez de construtores públicos?</div>
+      <div class="qa-answer">Factory method controla criação, garante invariantes (status PENDING, total ZERO), torna intenção explícita e pode retornar subtipos. Construtor público permitiria criar entidade em estado inválido.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é um Aggregate Root no DDD?</div>
+      <div class="qa-answer">É a entidade raiz de um agregado — o único ponto de entrada para modificar o cluster. Order é o Aggregate Root; OrderItem só é acessado via Order. Isso garante consistência das invariantes de negócio.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Qual a diferença entre DTO e Entity?</div>
+      <div class="qa-answer">Entity tem identidade, ciclo de vida e regras de negócio (persiste no banco). DTO é objeto de transporte sem lógica — Java Record imutável que cruza fronteiras (web ↔ application). Nunca exponha entidades na API.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Por que usar ProblemDetail para erros REST?</div>
+      <div class="qa-answer">RFC 7807 padroniza respostas de erro: type, title, status, detail, instance. Clientes parsam erros de forma uniforme. Spring Boot 3 suporta nativamente via ProblemDetail.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 02 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-02">
+  <div class="phase-header">
+    <div class="phase-number">02</div>
+    <div>
+      <div class="phase-title">Persistência Avançada com JPA e Hibernate 6</div>
+      <div class="phase-subtitle">N+1 · Transactions · Specifications · Optimistic Locking · Flyway</div>
+    </div>
+  </div>
+
+  <h3 id="f02-n1">O Problema N+1 — Vilão de Performance JPA</h3>
+
+  <!-- SVG: N+1 Problem Visualization -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="600" height="220" fill="#0d1117" rx="8"/>
+      <!-- Problem side -->
+      <text x="150" y="28" text-anchor="middle" fill="#f85149" font-size="12" font-weight="700">❌ N+1 Problem</text>
+      <rect x="20" y="40" width="260" height="30" rx="4" fill="#f8514922" stroke="#f85149" stroke-width="1"/>
+      <text x="150" y="60" text-anchor="middle" fill="#f85149" font-size="10" font-family="JetBrains Mono">SELECT * FROM orders (1 query)</text>
+      <rect x="20" y="78" width="260" height="18" rx="3" fill="#f8514911" stroke="#f8514966" stroke-width="0.5"/>
+      <text x="150" y="91" text-anchor="middle" fill="#f85149" font-size="9" font-family="JetBrains Mono">SELECT * FROM items WHERE order_id=1</text>
+      <rect x="20" y="98" width="260" height="18" rx="3" fill="#f8514911" stroke="#f8514966" stroke-width="0.5"/>
+      <text x="150" y="111" text-anchor="middle" fill="#f85149" font-size="9" font-family="JetBrains Mono">SELECT * FROM items WHERE order_id=2</text>
+      <rect x="20" y="118" width="260" height="18" rx="3" fill="#f8514911" stroke="#f8514966" stroke-width="0.5"/>
+      <text x="150" y="131" text-anchor="middle" fill="#f85149" font-size="9" font-family="JetBrains Mono">... × N pedidos = 101 queries!</text>
+
+      <!-- Divider -->
+      <line x1="300" y1="20" x2="300" y2="200" stroke="#30363d" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- Solution side -->
+      <text x="450" y="28" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">✅ JOIN FETCH</text>
+      <rect x="320" y="40" width="260" height="50" rx="4" fill="#3fb95022" stroke="#3fb950" stroke-width="1"/>
+      <text x="450" y="60" text-anchor="middle" fill="#3fb950" font-size="10" font-family="JetBrains Mono">SELECT o FROM Order o</text>
+      <text x="450" y="78" text-anchor="middle" fill="#3fb950" font-size="10" font-family="JetBrains Mono">JOIN FETCH o.items</text>
+
+      <text x="450" y="120" text-anchor="middle" fill="#8b949e" font-size="11">= 1 query única!</text>
+      <text x="450" y="145" text-anchor="middle" fill="#3fb950" font-size="22" font-weight="700">101 → 1</text>
+
+      <!-- Table -->
+      <text x="300" y="185" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">JOIN FETCH = query única | @EntityGraph = Spring Data way | @BatchSize = lote (paginação safe)</text>
+    </svg>
+    <div class="diagram-caption">N+1 transforma 1 query em 101 queries — JOIN FETCH resolve com um SQL JOIN</div>
+  </div>
+
+  <h4 id="f02-solucoes-n1">3 Soluções para N+1</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Cenário</th><th>Solução</th></tr></thead>
+      <tbody>
+        <tr><td>Query única por ID com join</td><td><code>JOIN FETCH</code> ou <code>@EntityGraph</code></td></tr>
+        <tr><td>Listagem com paginação</td><td><code>@BatchSize(size = 50)</code></td></tr>
+        <tr><td>Queries derivadas do Spring Data</td><td><code>@EntityGraph(attributePaths)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-title">⚠️ Cuidado: JOIN FETCH + Paginação</div>
+    <p>JOIN FETCH com <code>Pageable</code> carrega TUDO em memória. Warning: <code>HHH90003004: applying in memory!</code> — Em 1M de pedidos, crashará a aplicação. Use <code>@BatchSize</code> para paginação.</p>
+  </div>
+
+  <h3 id="f02-transactions">Transações em Profundidade</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Propagação</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><code>REQUIRED</code> (default)</td><td>Usa transação existente ou cria nova</td></tr>
+        <tr><td><code>REQUIRES_NEW</code></td><td>Sempre cria transação nova (ex: auditoria que não pode falhar com o fluxo principal)</td></tr>
+        <tr><td><code>MANDATORY</code></td><td>Exige transação existente, lança exceção se não houver</td></tr>
+        <tr><td><code>NEVER</code></td><td>Lança exceção se houver transação ativa</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ Armadilha: Self-Invocation</div>
+    <p>Chamar um método <code>@Transactional</code> de outro método da mesma classe NÃO ativa o proxy. O <code>@Transactional</code> é ignorado. Solução: extraia o método para outro <code>@Service</code> ou use <code>self-injection</code>.</p>
+  </div>
+
+  <h3 id="f02-specification">Specification Pattern — Queries Dinâmicas</h3>
+  <pre><code><span class="kw">public class</span> <span class="typ">OrderSpecifications</span> {
+
+    <span class="kw">public static</span> <span class="typ">Specification</span>&lt;<span class="typ">Order</span>&gt; <span class="fn">hasStatus</span>(<span class="typ">OrderStatus</span> status) {
+        <span class="kw">return</span> (root, query, cb) <span class="kw">-></span>
+            status == <span class="kw">null</span> ? <span class="kw">null</span> : cb.equal(root.get(<span class="str">"status"</span>), status);
+    }
+
+    <span class="kw">public static</span> <span class="typ">Specification</span>&lt;<span class="typ">Order</span>&gt; <span class="fn">hasCustomer</span>(<span class="typ">Long</span> customerId) {
+        <span class="kw">return</span> (root, query, cb) <span class="kw">-></span>
+            customerId == <span class="kw">null</span> ? <span class="kw">null</span> : cb.equal(root.get(<span class="str">"customerId"</span>), customerId);
+    }
+}
+
+<span class="cm">// Uso: combinando specifications</span>
+<span class="typ">Specification</span>&lt;<span class="typ">Order</span>&gt; spec = <span class="typ">Specification</span>
+    .where(<span class="fn">hasStatus</span>(<span class="typ">OrderStatus</span>.<span class="str">PENDING</span>))
+    .and(<span class="fn">hasCustomer</span>(<span class="num">42L</span>));
+<span class="typ">Page</span>&lt;<span class="typ">Order</span>&gt; results = orderRepository.findAll(spec, pageable);</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f02-auditoria">Auditoria Automática</h4>
+  <pre><code><span class="ann">@MappedSuperclass</span>
+<span class="ann">@EntityListeners</span>(<span class="typ">AuditingEntityListener</span>.<span class="kw">class</span>)
+<span class="kw">public abstract class</span> <span class="typ">BaseEntity</span> {
+
+    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="typ">GenerationType</span>.<span class="str">IDENTITY</span>)
+    <span class="kw">private</span> <span class="typ">Long</span> id;
+
+    <span class="ann">@CreatedDate</span>
+    <span class="kw">private</span> <span class="typ">LocalDateTime</span> createdAt;
+
+    <span class="ann">@LastModifiedDate</span>
+    <span class="kw">private</span> <span class="typ">LocalDateTime</span> updatedAt;
+
+    <span class="ann">@Version</span> <span class="cm">// Optimistic Locking</span>
+    <span class="kw">private</span> <span class="typ">Integer</span> version;
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 02</h4>
+    <div class="qa">
+      <div class="qa-question">O que é o problema N+1 no JPA e como resolver?</div>
+      <div class="qa-answer">N+1 ocorre quando buscar N entidades gera 1 + N queries (1 para o pai, N para filhos lazy). Soluções: JOIN FETCH (JPQL), @EntityGraph (Spring Data), @BatchSize (lote, safe com paginação).</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é Optimistic Locking?</div>
+      <div class="qa-answer">Estratégia que permite acesso concorrente sem bloquear registros. Usa @Version — se dois usuários lerem versão 1 e um salvar primeiro (versão → 2), o segundo recebe OptimisticLockException. Ideal para cenários de alta leitura e baixa escrita concorrente.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é a armadilha do self-invocation em @Transactional?</div>
+      <div class="qa-answer">Chamar método @Transactional de outro método da mesma classe não ativa o proxy AOP do Spring. O @Transactional é ignorado. Solução: extrair método para outro @Service, usar self-injection, ou ApplicationContext.getBean().</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Specification Pattern vs JPQL — quando usar qual?</div>
+      <div class="qa-answer">Specification: queries dinâmicas com combinação de filtros opcionais (type-safe, reutilizável). JPQL: queries fixas e simples. Se o endpoint aceita 5+ filtros opcionais, Specification é mais limpo que montar JPQL com ifs.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 03 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-03">
+  <div class="phase-header">
+    <div class="phase-number">03</div>
+    <div>
+      <div class="phase-title">Segurança: Spring Security 6 + JWT</div>
+      <div class="phase-subtitle">Autenticação stateless · Autorização por roles · Filtro customizado</div>
+    </div>
+  </div>
+
+  <!-- SVG: JWT Flow -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 660 260" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="660" height="260" fill="#0d1117" rx="8"/>
+      <!-- Step 1: Login -->
+      <rect x="20" y="40" width="130" height="60" rx="6" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="85" y="62" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600">1. LOGIN</text>
+      <text x="85" y="78" text-anchor="middle" fill="#8b949e" font-size="9">POST /auth/login</text>
+      <text x="85" y="90" text-anchor="middle" fill="#8b949e" font-size="9">{email, password}</text>
+
+      <line x1="150" y1="70" x2="180" y2="70" stroke="#58a6ff" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Step 2: Validate -->
+      <rect x="180" y="40" width="130" height="60" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="245" y="62" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">2. VALIDA</text>
+      <text x="245" y="78" text-anchor="middle" fill="#8b949e" font-size="9">Verifica credenciais</text>
+      <text x="245" y="90" text-anchor="middle" fill="#8b949e" font-size="9">Gera JWT token</text>
+
+      <line x1="310" y1="70" x2="340" y2="70" stroke="#3fb950" stroke-width="1.2" marker-end="url(#arrowGreen)"/>
+
+      <!-- Step 3: Token -->
+      <rect x="340" y="40" width="130" height="60" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="405" y="62" text-anchor="middle" fill="#f0883e" font-size="10" font-weight="600">3. TOKEN</text>
+      <text x="405" y="78" text-anchor="middle" fill="#8b949e" font-size="9">Retorna JWT</text>
+      <text x="405" y="90" text-anchor="middle" fill="#8b949e" font-size="9">exp: 1h</text>
+
+      <line x1="470" y1="70" x2="500" y2="70" stroke="#f0883e" stroke-width="1.2" marker-end="url(#arrowOrange)"/>
+
+      <!-- Step 4: Use -->
+      <rect x="500" y="40" width="140" height="60" rx="6" fill="#161b22" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="570" y="62" text-anchor="middle" fill="#d2a8ff" font-size="10" font-weight="600">4. USE TOKEN</text>
+      <text x="570" y="78" text-anchor="middle" fill="#8b949e" font-size="9">Authorization:</text>
+      <text x="570" y="90" text-anchor="middle" fill="#8b949e" font-size="9">Bearer eyJhbGci...</text>
+
+      <!-- JWT Structure -->
+      <text x="330" y="140" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="700">Estrutura do JWT</text>
+      <rect x="40" y="155" width="180" height="40" rx="4" fill="#ff7b7222" stroke="#ff7b72" stroke-width="1"/>
+      <text x="130" y="172" text-anchor="middle" fill="#ff7b72" font-size="10" font-weight="600">HEADER</text>
+      <text x="130" y="186" text-anchor="middle" fill="#8b949e" font-size="9">{alg: "HS256", typ: "JWT"}</text>
+
+      <rect x="240" y="155" width="180" height="40" rx="4" fill="#d2a8ff22" stroke="#d2a8ff" stroke-width="1"/>
+      <text x="330" y="172" text-anchor="middle" fill="#d2a8ff" font-size="10" font-weight="600">PAYLOAD</text>
+      <text x="330" y="186" text-anchor="middle" fill="#8b949e" font-size="9">{sub, roles, iat, exp}</text>
+
+      <rect x="440" y="155" width="180" height="40" rx="4" fill="#3fb95022" stroke="#3fb950" stroke-width="1"/>
+      <text x="530" y="172" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">SIGNATURE</text>
+      <text x="530" y="186" text-anchor="middle" fill="#8b949e" font-size="9">HMAC-SHA256(secret)</text>
+
+      <text x="330" y="230" text-anchor="middle" fill="#58a6ff" font-size="10">eyJhbGci<span>.</span>eyJzdWIi<span>.</span>abc123 → Header.Payload.Signature (Base64)</text>
+    </svg>
+    <div class="diagram-caption">Fluxo JWT: Login → Gera Token → Cliente envia Bearer em cada request</div>
+  </div>
+
+  <h3 id="f03-jwt">JwtService — Geração e Validação de Tokens</h3>
+  <pre><code><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="typ">JwtService</span> {
+
+    <span class="kw">private final</span> <span class="typ">SecretKey</span> key;
+    <span class="kw">private final long</span> expirationMs;
+
+    <span class="kw">public</span> <span class="fn">JwtService</span>(<span class="typ">JwtProperties</span> props) {
+        <span class="kw">this</span>.key = <span class="typ">Keys</span>.hmacShaKeyFor(props.secretKey().getBytes());
+        <span class="kw">this</span>.expirationMs = props.expirationMs();
+    }
+
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">generateToken</span>(<span class="typ">String</span> userId, <span class="typ">String</span> roles) {
+        <span class="kw">return</span> <span class="typ">Jwts</span>.builder()
+            .subject(userId)
+            .claim(<span class="str">"roles"</span>, roles)
+            .issuedAt(<span class="kw">new</span> <span class="typ">Date</span>())
+            .expiration(<span class="kw">new</span> <span class="typ">Date</span>(System.currentTimeMillis() + expirationMs))
+            .signWith(key)
+            .compact();
+    }
+
+    <span class="kw">public</span> <span class="typ">Claims</span> <span class="fn">parseToken</span>(<span class="typ">String</span> token) {
+        <span class="kw">return</span> <span class="typ">Jwts</span>.parser()
+            .verifyWith(key)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f03-filter">SecurityConfig — Spring Security 6</h3>
+  <pre><code><span class="ann">@Configuration</span>
+<span class="ann">@EnableMethodSecurity</span>
+<span class="kw">public class</span> <span class="typ">SecurityConfig</span> {
+
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="typ">SecurityFilterChain</span> <span class="fn">filterChain</span>(<span class="typ">HttpSecurity</span> http,
+            <span class="typ">JwtAuthenticationFilter</span> jwtFilter) <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="kw">return</span> http
+            .csrf(<span class="typ">AbstractHttpConfigurer</span>::disable)   <span class="cm">// Stateless = sem CSRF</span>
+            .sessionManagement(s <span class="kw">-></span> s.sessionCreationPolicy(<span class="str">STATELESS</span>))
+            .authorizeHttpRequests(auth <span class="kw">-></span> auth
+                .requestMatchers(<span class="str">"/auth/**"</span>).permitAll()
+                .requestMatchers(<span class="str">"/swagger-ui/**"</span>, <span class="str">"/v3/api-docs/**"</span>).permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtFilter, <span class="typ">UsernamePasswordAuthenticationFilter</span>.<span class="kw">class</span>)
+            .build();
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Por que desabilitar CSRF?</div>
+    <p>CSRF protege contra requisições forjadas em browsers com cookies de sessão. APIs stateless com JWT no header <code>Authorization</code> não usam cookies → CSRF não se aplica e pode ser desabilitado.</p>
+  </div>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 03</h4>
+    <div class="qa">
+      <div class="qa-question">Diferença entre JWT e sessão tradicional?</div>
+      <div class="qa-answer">Sessão: estado no servidor (HttpSession), necessita sticky sessions ou Redis para múltiplas instâncias. JWT: stateless, token self-contained, qualquer instância valida. JWT escala horizontalmente sem infraestrutura compartilhada, mas não permite revogação individual sem blacklist.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Por que CSRF é desabilitado em APIs stateless?</div>
+      <div class="qa-answer">CSRF explora cookies enviados automaticamente pelo browser. APIs JWT usam header Authorization (não cookie) → o browser não envia automaticamente → CSRF não se aplica.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é refresh token e por que usar?</div>
+      <div class="qa-answer">Access token tem vida curta (15min-1h). Refresh token tem vida longa (dias/semanas) e é usado exclusivamente para gerar novos access tokens. Se o access token vazar, o impacto é limitado pelo TTL curto.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">OAuth2 vs JWT: qual a relação?</div>
+      <div class="qa-answer">OAuth2 é um protocolo de autorização (define fluxos como Authorization Code, Client Credentials). JWT é um formato de token. OAuth2 PODE usar JWT como formato de access token, mas não é obrigatório. São conceitos complementares, não concorrentes.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 04 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-04">
+  <div class="phase-header">
+    <div class="phase-number">04</div>
+    <div>
+      <div class="phase-title">Mensageria: Apache Kafka com Spring Kafka</div>
+      <div class="phase-subtitle">Producer · Consumer · Dead Letter Queue · Eventos de Domínio</div>
+    </div>
+  </div>
+
+  <!-- SVG: Kafka Architecture -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="640" height="300" fill="#0d1117" rx="8"/>
+
+      <!-- Producer -->
+      <rect x="20" y="100" width="120" height="70" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="80" y="125" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="600">PRODUCER</text>
+      <text x="80" y="142" text-anchor="middle" fill="#8b949e" font-size="9">order-service</text>
+      <text x="80" y="158" text-anchor="middle" fill="#8b949e" font-size="9">publica eventos</text>
+
+      <!-- Arrow Producer -> Topic -->
+      <line x1="140" y1="135" x2="190" y2="135" stroke="#f0883e" stroke-width="1.5" marker-end="url(#arrowOrange)"/>
+
+      <!-- Topic -->
+      <rect x="190" y="50" width="240" height="170" rx="8" fill="#161b22" stroke="#f0883e" stroke-width="2"/>
+      <text x="310" y="40" text-anchor="middle" fill="#f0883e" font-size="12" font-weight="700">KAFKA BROKER</text>
+
+      <!-- Partitions -->
+      <text x="310" y="74" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Topic: order-events</text>
+      <rect x="210" y="85" width="200" height="24" rx="4" fill="#f0883e22" stroke="#f0883e66" stroke-width="1"/>
+      <text x="310" y="101" text-anchor="middle" fill="#f0883e" font-size="9">Partition 0  [msg1, msg3, msg5...]</text>
+      <rect x="210" y="115" width="200" height="24" rx="4" fill="#f0883e22" stroke="#f0883e66" stroke-width="1"/>
+      <text x="310" y="131" text-anchor="middle" fill="#f0883e" font-size="9">Partition 1  [msg2, msg4, msg6...]</text>
+      <rect x="210" y="145" width="200" height="24" rx="4" fill="#f0883e22" stroke="#f0883e66" stroke-width="1"/>
+      <text x="310" y="161" text-anchor="middle" fill="#f0883e" font-size="9">Partition 2  [msg7, msg8, msg9...]</text>
+
+      <!-- DLQ -->
+      <rect x="210" y="182" width="200" height="24" rx="4" fill="#f8514922" stroke="#f85149" stroke-width="1"/>
+      <text x="310" y="198" text-anchor="middle" fill="#f85149" font-size="9">DLQ: order-events.DLT (falhas)</text>
+
+      <!-- Consumer Group -->
+      <rect x="480" y="70" width="140" height="100" rx="6" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="550" y="92" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600">CONSUMER GROUP</text>
+      <text x="550" y="112" text-anchor="middle" fill="#8b949e" font-size="9">payment-service</text>
+      <text x="550" y="128" text-anchor="middle" fill="#8b949e" font-size="9">notification-service</text>
+      <text x="550" y="148" text-anchor="middle" fill="#8b949e" font-size="9">@KafkaListener</text>
+
+      <!-- Arrow Topic -> Consumer -->
+      <line x1="430" y1="120" x2="480" y2="120" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Retry flow -->
+      <text x="320" y="255" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Fluxo de Retry</text>
+      <text x="320" y="275" text-anchor="middle" fill="#8b949e" font-size="9">Falha → Retry (3x, backoff exponencial) → DLQ (Dead Letter Queue) → Alerta</text>
+    </svg>
+    <div class="diagram-caption">Kafka: producers publicam em topics particionados; consumer groups consomem com retry + DLQ</div>
+  </div>
+
+  <h3 id="f04-events">Eventos de Domínio</h3>
+  <pre><code><span class="cm">// Records imutáveis — perfeitos para eventos</span>
+<span class="kw">public record</span> <span class="typ">OrderCreatedEvent</span>(
+    <span class="typ">Long</span> orderId, <span class="typ">Long</span> customerId, <span class="typ">Long</span> restaurantId,
+    <span class="typ">BigDecimal</span> totalAmount, <span class="typ">Instant</span> occurredAt
+) {}
+
+<span class="kw">public record</span> <span class="typ">OrderStatusChangedEvent</span>(
+    <span class="typ">Long</span> orderId, <span class="typ">String</span> previousStatus,
+    <span class="typ">String</span> newStatus, <span class="typ">Instant</span> occurredAt
+) {}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f04-producer">Producer — Porta e Adaptador</h4>
+  <pre><code><span class="cm">// Porta de saída (application/port/out/)</span>
+<span class="kw">public interface</span> <span class="typ">OrderEventPublisher</span> {
+    <span class="kw">void</span> <span class="fn">publish</span>(<span class="typ">OrderCreatedEvent</span> event);
+}
+
+<span class="cm">// Adaptador Kafka (adapter/out/messaging/)</span>
+<span class="ann">@Component</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="typ">KafkaOrderEventPublisher</span> <span class="kw">implements</span> <span class="typ">OrderEventPublisher</span> {
+
+    <span class="kw">private final</span> <span class="typ">KafkaTemplate</span>&lt;<span class="typ">String</span>, <span class="typ">Object</span>&gt; kafka;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public void</span> <span class="fn">publish</span>(<span class="typ">OrderCreatedEvent</span> event) {
+        kafka.send(<span class="str">"order-events"</span>, event.orderId().toString(), event);
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f04-dlq">Retry e Dead Letter Queue (DLQ)</h3>
+  <pre><code><span class="ann">@Bean</span>
+<span class="kw">public</span> <span class="typ">DefaultErrorHandler</span> <span class="fn">errorHandler</span>(
+        <span class="typ">KafkaTemplate</span>&lt;<span class="typ">String</span>, <span class="typ">Object</span>&gt; kafkaTemplate) {
+
+    <span class="typ">DeadLetterPublishingRecoverer</span> recoverer =
+        <span class="kw">new</span> <span class="typ">DeadLetterPublishingRecoverer</span>(kafkaTemplate);
+
+    <span class="typ">FixedBackOff</span> backOff = <span class="kw">new</span> <span class="typ">FixedBackOff</span>(<span class="num">1000L</span>, <span class="num">3</span>);  <span class="cm">// 3 retries, 1s interval</span>
+    <span class="kw">return new</span> <span class="typ">DefaultErrorHandler</span>(recoverer, backOff);
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 04</h4>
+    <div class="qa">
+      <div class="qa-question">O que é uma Dead Letter Queue (DLQ)?</div>
+      <div class="qa-answer">Tópico especial que armazena mensagens que falharam após N retries. Permite investigar e reprocessar falhas sem perder mensagens. No Kafka: sufixo .DLT (Dead Letter Topic).</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Kafka vs RabbitMQ — quando usar qual?</div>
+      <div class="qa-answer">Kafka: alto throughput, log append-only, replay de mensagens, ideal para event streaming e event sourcing. RabbitMQ: message broker clássico, routing complexo, confirmação granular. Kafka para eventos em escala; RabbitMQ para task queues com routing sofisticado.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que garante a ordem de mensagens no Kafka?</div>
+      <div class="qa-answer">Ordem é garantida DENTRO de uma partition. Usando orderId como key, todos os eventos do mesmo pedido vão para a mesma partition → processados em ordem. Sem key, distribuição round-robin sem garantia de ordem.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 05 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-05">
+  <div class="phase-header">
+    <div class="phase-number">05</div>
+    <div>
+      <div class="phase-title">Testes Automatizados</div>
+      <div class="phase-subtitle">JUnit 5 · Mockito · @WebMvcTest · @DataJpaTest · Testcontainers</div>
+    </div>
+  </div>
+
+  <!-- SVG: Test Pyramid -->
+  <h3 id="f05-piramide">Pirâmide de Testes</h3>
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="500" height="320" fill="#0d1117" rx="8"/>
+
+      <!-- Pyramid layers -->
+      <!-- E2E (top) -->
+      <polygon points="250,30 310,100 190,100" fill="#f8514933" stroke="#f85149" stroke-width="1.5"/>
+      <text x="250" y="78" text-anchor="middle" fill="#f85149" font-size="10" font-weight="600">E2E</text>
+
+      <!-- Integration (middle) -->
+      <polygon points="190,100 310,100 360,170 140,170" fill="#f0883e33" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="250" y="144" text-anchor="middle" fill="#f0883e" font-size="11" font-weight="600">Integração</text>
+
+      <!-- Unit (bottom) -->
+      <polygon points="140,170 360,170 420,250 80,250" fill="#3fb95033" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="250" y="220" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="600">Unitários</text>
+
+      <!-- Labels right side -->
+      <text x="380" y="75" fill="#f85149" font-size="9">Testcontainers · Poucos · Lentos</text>
+      <text x="380" y="145" fill="#f0883e" font-size="9">@WebMvcTest · @DataJpaTest · Médios</text>
+      <text x="380" y="225" fill="#3fb950" font-size="9">JUnit 5 · Mockito · Muitos · Rápidos</text>
+
+      <!-- Test counts -->
+      <text x="250" y="290" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">Quanto mais na base, melhor: rápidos, baratos e confiáveis</text>
+    </svg>
+    <div class="diagram-caption">Pirâmide: muitos unitários (rápidos), alguns de integração, poucos E2E (custosos)</div>
+  </div>
+
+  <h4 id="f05-unit">Testes Unitários — Domínio (Java puro)</h4>
+  <pre><code><span class="ann">@Nested</span>
+<span class="kw">class</span> <span class="typ">TransitionTests</span> {
+    <span class="ann">@Test</span>
+    <span class="kw">void</span> <span class="fn">shouldTransitionFromPendingToConfirmed</span>() {
+        <span class="typ">Order</span> order = <span class="typ">Order</span>.create(<span class="num">1L</span>, <span class="num">1L</span>);
+        order.transitionTo(<span class="typ">OrderStatus</span>.<span class="str">CONFIRMED</span>);
+        assertThat(order.getStatus()).isEqualTo(<span class="typ">OrderStatus</span>.<span class="str">CONFIRMED</span>);
+    }
+
+    <span class="ann">@Test</span>
+    <span class="kw">void</span> <span class="fn">shouldRejectInvalidTransition</span>() {
+        <span class="typ">Order</span> order = <span class="typ">Order</span>.create(<span class="num">1L</span>, <span class="num">1L</span>);
+        assertThatThrownBy(() <span class="kw">-></span> order.transitionTo(<span class="typ">OrderStatus</span>.<span class="str">DELIVERED</span>))
+            .isInstanceOf(<span class="typ">IllegalStateException</span>.<span class="kw">class</span>);
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f05-mockito">Testes de Service com Mockito</h4>
+  <pre><code><span class="ann">@ExtendWith</span>(<span class="typ">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="typ">OrderApplicationServiceTest</span> {
+
+    <span class="ann">@Mock</span> <span class="typ">OrderRepository</span> orderRepository;
+    <span class="ann">@Mock</span> <span class="typ">OrderMapper</span> mapper;
+    <span class="ann">@InjectMocks</span> <span class="typ">OrderApplicationService</span> service;
+
+    <span class="ann">@Test</span>
+    <span class="kw">void</span> <span class="fn">shouldCreateOrder</span>() {
+        <span class="cm">// given</span>
+        given(orderRepository.save(any())).willReturn(sampleOrder());
+        given(mapper.toResponse(any())).willReturn(sampleResponse());
+
+        <span class="cm">// when</span>
+        <span class="typ">OrderResponse</span> result = service.createOrder(sampleRequest());
+
+        <span class="cm">// then</span>
+        assertThat(result).isNotNull();
+        then(orderRepository).should().save(any(<span class="typ">Order</span>.<span class="kw">class</span>));
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f05-testcontainers">Testes E2E com Testcontainers</h3>
+  <pre><code><span class="ann">@SpringBootTest</span>(webEnvironment = <span class="str">RANDOM_PORT</span>)
+<span class="ann">@Testcontainers</span>
+<span class="kw">class</span> <span class="typ">OrderIntegrationTest</span> {
+
+    <span class="ann">@Container</span>
+    <span class="kw">static</span> <span class="typ">PostgreSQLContainer</span>&lt;?&gt; postgres =
+        <span class="kw">new</span> <span class="typ">PostgreSQLContainer</span>&lt;&gt;(<span class="str">"postgres:16-alpine"</span>);
+
+    <span class="ann">@DynamicPropertySource</span>
+    <span class="kw">static void</span> <span class="fn">props</span>(<span class="typ">DynamicPropertyRegistry</span> registry) {
+        registry.add(<span class="str">"spring.datasource.url"</span>, postgres::getJdbcUrl);
+        registry.add(<span class="str">"spring.datasource.username"</span>, postgres::getUsername);
+        registry.add(<span class="str">"spring.datasource.password"</span>, postgres::getPassword);
+    }
+
+    <span class="ann">@Autowired</span> <span class="typ">TestRestTemplate</span> rest;
+
+    <span class="ann">@Test</span>
+    <span class="kw">void</span> <span class="fn">shouldCreateAndRetrieveOrder</span>() {
+        <span class="typ">var</span> response = rest.postForEntity(<span class="str">"/api/orders"</span>, request, <span class="typ">OrderResponse</span>.<span class="kw">class</span>);
+        assertThat(response.getStatusCode()).isEqualTo(<span class="typ">HttpStatus</span>.<span class="str">CREATED</span>);
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 05</h4>
+    <div class="qa">
+      <div class="qa-question">Diferença entre @Mock e @MockitoBean?</div>
+      <div class="qa-answer">@Mock (Mockito puro) cria mock sem Spring Context — rápido, para testes unitários. @MockitoBean (Spring Boot 3.4+, substitui o deprecated @MockBean) substitui bean no Spring Context — lento, para testes de integração (@WebMvcTest, @SpringBootTest). Use @Mock sempre que possível.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é Testcontainers e por que usar?</div>
+      <div class="qa-answer">Library que sobe containers Docker reais (PostgreSQL, Kafka, Redis) durante testes. Testa contra a mesma tecnologia de produção, eliminando H2 fakes. Lifecycle gerenciado automaticamente com @Testcontainers + @Container.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Como organizar testes na pirâmide?</div>
+      <div class="qa-answer">Base (muitos): unitários de domínio com JUnit + AssertJ — testam regras de negócio sem framework. Meio: @WebMvcTest para controllers, @DataJpaTest para repositories. Topo (poucos): @SpringBootTest + Testcontainers para fluxos completos.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 06 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-06">
+  <div class="phase-header">
+    <div class="phase-number">06</div>
+    <div>
+      <div class="phase-title">Documentação da API: SpringDoc OpenAPI 2</div>
+      <div class="phase-subtitle">Swagger UI · Anotações · API-First · SDK Generation</div>
+    </div>
+  </div>
+
+  <h3 id="f06-swagger">Configuração e Anotações</h3>
+
+  <pre><code><span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="typ">OpenApiConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="typ">OpenAPI</span> <span class="fn">customOpenAPI</span>() {
+        <span class="kw">return new</span> <span class="typ">OpenAPI</span>()
+            .info(<span class="kw">new</span> <span class="typ">Info</span>()
+                .title(<span class="str">"FoodHub Order API"</span>)
+                .version(<span class="str">"1.0"</span>)
+                .description(<span class="str">"API de gerenciamento de pedidos"</span>))
+            .addSecurityItem(<span class="kw">new</span> <span class="typ">SecurityRequirement</span>().addList(<span class="str">"Bearer"</span>))
+            .components(<span class="kw">new</span> <span class="typ">Components</span>().addSecuritySchemes(<span class="str">"Bearer"</span>,
+                <span class="kw">new</span> <span class="typ">SecurityScheme</span>()
+                    .type(<span class="typ">SecurityScheme</span>.Type.<span class="str">HTTP</span>)
+                    .scheme(<span class="str">"bearer"</span>)
+                    .bearerFormat(<span class="str">"JWT"</span>)));
+    }
+}</code><span class="code-label">Java</span></pre>
+
+  <h4 id="f06-annotations">Anotações nos Controllers</h4>
+  <pre><code><span class="ann">@Operation</span>(summary = <span class="str">"Criar pedido"</span>,
+    description = <span class="str">"Cria um novo pedido para o cliente"</span>)
+<span class="ann">@ApiResponses</span>({
+    <span class="ann">@ApiResponse</span>(responseCode = <span class="str">"201"</span>, description = <span class="str">"Pedido criado"</span>),
+    <span class="ann">@ApiResponse</span>(responseCode = <span class="str">"400"</span>, description = <span class="str">"Dados inválidos"</span>),
+    <span class="ann">@ApiResponse</span>(responseCode = <span class="str">"401"</span>, description = <span class="str">"Não autenticado"</span>)
+})
+<span class="ann">@PostMapping</span>
+<span class="kw">public</span> <span class="typ">ResponseEntity</span>&lt;<span class="typ">OrderResponse</span>&gt; <span class="fn">create</span>(...) { ... }</code><span class="code-label">Java</span></pre>
+
+  <div class="card-grid">
+    <div class="card">
+      <h5>Swagger UI</h5>
+      <p><code>http://localhost:8081/swagger-ui.html</code> — Interface visual para testar a API</p>
+    </div>
+    <div class="card">
+      <h5>OpenAPI JSON</h5>
+      <p><code>/v3/api-docs</code> — Schema JSON para geração de clients SDK</p>
+    </div>
+  </div>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 06</h4>
+    <div class="qa">
+      <div class="qa-question">O que é API-First e por que adotar?</div>
+      <div class="qa-answer">Definir o contrato (OpenAPI spec) ANTES de implementar o código. Frontend e backend podem trabalhar em paralelo. Contrato serve como documentação viva e pode gerar SDKs automaticamente.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">SpringDoc vs Springfox — qual usar?</div>
+      <div class="qa-answer">SpringDoc é o projeto ativo que suporta Spring Boot 3 e Jakarta EE. Springfox está abandonado e incompatível com Spring Boot 3. Sempre use SpringDoc (springdoc-openapi-starter-webmvc-ui).</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 07 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-07">
+  <div class="phase-header">
+    <div class="phase-number">07</div>
+    <div>
+      <div class="phase-title">Docker: Containerização e Docker Compose</div>
+      <div class="phase-subtitle">Multi-stage Build · Compose · Health Checks · Performance</div>
+    </div>
+  </div>
+
+  <h3 id="f07-dockerfile">Dockerfile — Multi-Stage Build</h3>
+  <pre><code><span class="cm"># Stage 1: Build com JDK (descartado depois)</span>
+<span class="kw">FROM</span> eclipse-temurin:<span class="num">21</span>-jdk-alpine <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> pom.xml .
+<span class="kw">COPY</span> src ./src
+<span class="kw">RUN</span> ./mvnw package -DskipTests
+
+<span class="cm"># Stage 2: Runtime com JRE (imagem final leve)</span>
+<span class="kw">FROM</span> eclipse-temurin:<span class="num">21</span>-jre-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=builder /app/target/*.jar app.jar
+
+<span class="kw">EXPOSE</span> <span class="num">8081</span>
+<span class="kw">ENTRYPOINT</span> [<span class="str">"java"</span>, <span class="str">"-jar"</span>, <span class="str">"app.jar"</span>]</code><span class="code-label">Dockerfile</span></pre>
+
+  <div class="callout success">
+    <div class="callout-title">✅ Por que Multi-Stage?</div>
+    <p>JDK Alpine: ~340MB → JRE Alpine: ~180MB. Multi-stage descarta o JDK e mantém só o JRE na imagem final. Menos camadas + imagem menor = deploy mais rápido.</p>
+  </div>
+
+  <h3 id="f07-compose">Docker Compose</h3>
+  <pre><code><span class="kw">services:</span>
+  <span class="str">postgres:</span>
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: foodhub
+      POSTGRES_PASSWORD: foodhub123
+    ports: [<span class="str">"5432:5432"</span>]
+    volumes: [<span class="str">"./init-databases.sql:/docker-entrypoint-initdb.d/init.sql"</span>]
+    <span class="fn">healthcheck:</span>
+      test: [<span class="str">"CMD-SHELL"</span>, <span class="str">"pg_isready -U foodhub"</span>]
+      interval: 5s
+      retries: 5
+
+  <span class="str">kafka:</span>
+    image: apache/kafka:3.8.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller  <span class="cm"># KRaft mode (sem ZooKeeper)</span>
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+    ports: [<span class="str">"9092:9092"</span>]
+
+  <span class="str">order-service:</span>
+    build: ./order-service
+    ports: [<span class="str">"8081:8081"</span>]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres: { condition: service_healthy }
+      kafka: { condition: service_started }</code><span class="code-label">YAML</span></pre>
+
+  <h3 id="f07-health">Health Checks</h3>
+  <p>Health checks garantem que o Docker Compose espere serviços estarem <strong>prontos</strong>, não apenas <strong>rodando</strong>. O <code>depends_on</code> com <code>service_healthy</code> só inicia o serviço dependente quando o health check passar.</p>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 07</h4>
+    <div class="qa">
+      <div class="qa-question">O que é multi-stage build e por que usar?</div>
+      <div class="qa-answer">Dockerfile com múltiplos FROM. Stage 1: build com JDK (pesado). Stage 2: runtime com JRE (leve). O build é descartado, resultando em imagem menor (40-50% menor), mais segura (sem ferramentas de build) e mais rápida para deploy.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Diferença entre CMD e ENTRYPOINT no Dockerfile?</div>
+      <div class="qa-answer">ENTRYPOINT define o executável principal (não facilmente sobrescrito). CMD define argumentos default (facilmente sobrescrito pelo usuário). Combine: ENTRYPOINT ["java", "-jar"] e CMD ["app.jar"] para flexibilidade. Na prática, ENTRYPOINT é o comando fixo, CMD são parâmetros opcionais.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Por que depends_on sozinho não é suficiente?</div>
+      <div class="qa-answer">depends_on só garante que o container INICIOU, não que está PRONTO. PostgreSQL pode demorar para aceitar conexões. Com healthcheck + condition: service_healthy, o Compose espera o banco responder antes de iniciar o app.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 08 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-08">
+  <div class="phase-header">
+    <div class="phase-number">08</div>
+    <div>
+      <div class="phase-title">Spring Cloud: Gateway, Eureka, Config e Resilience4j</div>
+      <div class="phase-subtitle">Service Discovery · Configuração Centralizada · Circuit Breaker</div>
+    </div>
+  </div>
+
+  <!-- SVG: Spring Cloud Architecture -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 660 340" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="660" height="340" fill="#0d1117" rx="8"/>
+
+      <!-- Config Server -->
+      <rect x="30" y="20" width="150" height="55" rx="6" fill="#161b22" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="105" y="43" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="600">Config Server</text>
+      <text x="105" y="60" text-anchor="middle" fill="#8b949e" font-size="9">:8888 · Git-backed</text>
+
+      <!-- Eureka -->
+      <rect x="480" y="20" width="150" height="55" rx="6" fill="#161b22" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="555" y="43" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="600">Eureka Server</text>
+      <text x="555" y="60" text-anchor="middle" fill="#8b949e" font-size="9">:8761 · Discovery</text>
+
+      <!-- Gateway -->
+      <rect x="240" y="90" width="180" height="55" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="330" y="113" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="700">API Gateway</text>
+      <text x="330" y="130" text-anchor="middle" fill="#8b949e" font-size="9">:8080 · Rate Limiting · Auth</text>
+
+      <!-- Services -->
+      <rect x="60" y="200" width="150" height="50" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="135" y="222" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">order-service</text>
+      <text x="135" y="238" text-anchor="middle" fill="#8b949e" font-size="9">:8081</text>
+
+      <rect x="255" y="200" width="150" height="50" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="330" y="222" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">restaurant-service</text>
+      <text x="330" y="238" text-anchor="middle" fill="#8b949e" font-size="9">:8082</text>
+
+      <rect x="450" y="200" width="150" height="50" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="525" y="222" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">payment-service</text>
+      <text x="525" y="238" text-anchor="middle" fill="#8b949e" font-size="9">:8083</text>
+
+      <!-- Arrows Gateway -> Services -->
+      <line x1="290" y1="145" x2="135" y2="200" stroke="#30363d" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="330" y1="145" x2="330" y2="200" stroke="#30363d" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="370" y1="145" x2="525" y2="200" stroke="#30363d" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Feign arrow with Circuit Breaker -->
+      <line x1="210" y1="220" x2="255" y2="220" stroke="#f0883e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowOrange)"/>
+      <text x="233" y="212" text-anchor="middle" fill="#f0883e" font-size="8">Feign</text>
+
+      <!-- Resilience4j label -->
+      <rect x="180" y="280" width="300" height="40" rx="6" fill="#161b22" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="330" y="298" text-anchor="middle" fill="#ff7b72" font-size="10" font-weight="600">Resilience4j — Circuit Breaker + Retry</text>
+      <text x="330" y="312" text-anchor="middle" fill="#8b949e" font-size="9">Protege chamadas entre serviços · Fallback automático</text>
+
+      <!-- Arrows: Config distributes to services -->
+      <line x1="105" y1="75" x2="135" y2="200" stroke="#d2a8ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line x1="105" y1="75" x2="330" y2="200" stroke="#d2a8ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line x1="105" y1="75" x2="525" y2="200" stroke="#d2a8ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+      <!-- Eureka arrows -->
+      <line x1="555" y1="75" x2="135" y2="200" stroke="#79c0ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line x1="555" y1="75" x2="330" y2="200" stroke="#79c0ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <line x1="555" y1="75" x2="525" y2="200" stroke="#79c0ff" stroke-width="0.8" stroke-dasharray="3 3"/>
+    </svg>
+    <div class="diagram-caption">Spring Cloud: Config Server distribui configuração; Eureka registra serviços; Gateway roteia; Resilience4j protege</div>
+  </div>
+
+  <h3 id="f08-feign">OpenFeign — Comunicação Declarativa</h3>
+  <pre><code><span class="ann">@FeignClient</span>(name = <span class="str">"restaurant-service"</span>,
+    fallback = <span class="typ">RestaurantClientFallback</span>.<span class="kw">class</span>)
+<span class="kw">public interface</span> <span class="typ">RestaurantClient</span> {
+
+    <span class="ann">@GetMapping</span>(<span class="str">"/api/internal/restaurants/{id}/menu-items"</span>)
+    <span class="typ">List</span>&lt;<span class="typ">MenuItemResponse</span>&gt; <span class="fn">getMenuItems</span>(
+        <span class="ann">@PathVariable</span> <span class="typ">Long</span> id);
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f08-resilience">Resilience4j — Circuit Breaker</h3>
+  <pre><code><span class="cm"># application.yml</span>
+resilience4j:
+  circuitbreaker:
+    instances:
+      restaurant-service:
+        sliding-window-size: <span class="num">10</span>
+        failure-rate-threshold: <span class="num">50</span>      <span class="cm"># abre se 50% falhar</span>
+        wait-duration-in-open-state: <span class="num">30s</span> <span class="cm"># espera 30s antes de tentar</span>
+        permitted-number-of-calls-in-half-open-state: <span class="num">5</span>
+  retry:
+    instances:
+      restaurant-service:
+        max-attempts: <span class="num">3</span>
+        wait-duration: <span class="num">500ms</span></code><span class="code-label">YAML</span></pre>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Estados do Circuit Breaker</div>
+    <p><strong>CLOSED</strong> (normal) → falhas excedem threshold → <strong>OPEN</strong> (rejeita chamadas) → tempo passa → <strong>HALF-OPEN</strong> (permite poucas chamadas de teste) → se OK volta a CLOSED, se falhas persistem volta a OPEN.</p>
+  </div>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 08</h4>
+    <div class="qa">
+      <div class="qa-question">O que é Service Discovery e por que usar?</div>
+      <div class="qa-answer">Mecanismo onde serviços se registram (Eureka) e descobrem uns aos outros por nome lógico, sem hardcoded IPs/ports. Essencial em ambientes com auto-scaling onde instâncias sobem e descem dinamicamente.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é Circuit Breaker e quando usar?</div>
+      <div class="qa-answer">Padrão que protege contra falhas em cascata. Se um serviço downstream está falhando, o circuit "abre" e retorna fallback imediato em vez de esperar timeout. Previne que um serviço lento derrube todos os que o chamam.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Diferença entre fallback e fail-fast?</div>
+      <div class="qa-answer">Fallback: retorna resposta alternativa (cache, default, mensagem amigável). Fail-fast: lança exceção imediata. Fallback é melhor UX; fail-fast é mais honesto. Escolha por contexto: GET pode retornar cache; POST deve fail-fast.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é o padrão Saga em microserviços?</div>
+      <div class="qa-answer">Padrão para transações distribuídas: sequência de transações locais, cada uma publica evento para a próxima. Se uma etapa falha, sagas compensatórias desfazem as anteriores. Dois tipos: Orquestração (coordenador central) e Coreografia (eventos diretos).</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 09 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-09">
+  <div class="phase-header">
+    <div class="phase-number">09</div>
+    <div>
+      <div class="phase-title">CI/CD: Pipeline com GitHub Actions</div>
+      <div class="phase-subtitle">Build · Test · Quality · Docker · Deploy (Staging + Prod)</div>
+    </div>
+  </div>
+
+  <!-- SVG: CI/CD Pipeline -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="700" height="180" fill="#0d1117" rx="8"/>
+
+      <!-- Pipeline stages -->
+      <rect x="20" y="50" width="110" height="70" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="75" y="74" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="700">BUILD &amp; TEST</text>
+      <text x="75" y="92" text-anchor="middle" fill="#8b949e" font-size="8">mvn verify</text>
+      <text x="75" y="106" text-anchor="middle" fill="#8b949e" font-size="8">Java 21 matrix</text>
+
+      <line x1="130" y1="85" x2="155" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="155" y="50" width="110" height="70" rx="6" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="210" y="74" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">QUALITY</text>
+      <text x="210" y="92" text-anchor="middle" fill="#8b949e" font-size="8">JaCoCo ≥80%</text>
+      <text x="210" y="106" text-anchor="middle" fill="#8b949e" font-size="8">SpotBugs</text>
+
+      <line x1="265" y1="85" x2="290" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="290" y="50" width="110" height="70" rx="6" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="345" y="74" text-anchor="middle" fill="#f0883e" font-size="10" font-weight="700">DOCKER</text>
+      <text x="345" y="92" text-anchor="middle" fill="#8b949e" font-size="8">Build image</text>
+      <text x="345" y="106" text-anchor="middle" fill="#8b949e" font-size="8">Push to GHCR</text>
+
+      <line x1="400" y1="85" x2="425" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="425" y="50" width="110" height="70" rx="6" fill="#161b22" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="480" y="74" text-anchor="middle" fill="#d2a8ff" font-size="10" font-weight="700">STAGING</text>
+      <text x="480" y="92" text-anchor="middle" fill="#8b949e" font-size="8">Deploy auto</text>
+      <text x="480" y="106" text-anchor="middle" fill="#8b949e" font-size="8">Smoke tests</text>
+
+      <line x1="535" y1="85" x2="560" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="560" y="50" width="120" height="70" rx="6" fill="#161b22" stroke="#ff7b72" stroke-width="2"/>
+      <text x="620" y="74" text-anchor="middle" fill="#ff7b72" font-size="10" font-weight="700">PRODUCTION</text>
+      <text x="620" y="92" text-anchor="middle" fill="#8b949e" font-size="8">Manual approval</text>
+      <text x="620" y="106" text-anchor="middle" fill="#8b949e" font-size="8">🔒 Protected env</text>
+
+      <text x="350" y="155" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Push to main → Build → Quality Gate → Docker → Staging → Manual Approval → Prod</text>
+    </svg>
+    <div class="diagram-caption">Pipeline CI/CD: 5 estágios, quality gate automático, aprovação manual para produção</div>
+  </div>
+
+  <h3 id="f09-quality">JaCoCo — Cobertura de Testes</h3>
+  <pre><code><span class="cm">&lt;!-- pom.xml — plugin JaCoCo --&gt;</span>
+&lt;<span class="kw">plugin</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.jacoco&lt;/<span class="kw">groupId</span>&gt;
+    &lt;<span class="kw">artifactId</span>&gt;jacoco-maven-plugin&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;<span class="kw">executions</span>&gt;
+        &lt;<span class="kw">execution</span>&gt;&lt;<span class="kw">goals</span>&gt;&lt;<span class="kw">goal</span>&gt;prepare-agent&lt;/goal&gt;&lt;/goals&gt;&lt;/execution&gt;
+        &lt;<span class="kw">execution</span> id=<span class="str">"check"</span>&gt;
+            &lt;<span class="kw">goals</span>&gt;&lt;<span class="kw">goal</span>&gt;check&lt;/goal&gt;&lt;/goals&gt;
+            &lt;<span class="kw">configuration</span>&gt;
+                &lt;<span class="kw">rules</span>&gt;&lt;<span class="kw">rule</span>&gt;
+                    &lt;<span class="kw">limits</span>&gt;&lt;<span class="kw">limit</span>&gt;
+                        &lt;<span class="kw">minimum</span>&gt;<span class="num">0.80</span>&lt;/<span class="kw">minimum</span>&gt;
+                    &lt;/<span class="kw">limit</span>&gt;&lt;/<span class="kw">limits</span>&gt;
+                &lt;/<span class="kw">rule</span>&gt;&lt;/<span class="kw">rules</span>&gt;
+            &lt;/<span class="kw">configuration</span>&gt;
+        &lt;/<span class="kw">execution</span>&gt;
+    &lt;/<span class="kw">executions</span>&gt;
+&lt;/<span class="kw">plugin</span>&gt;</code><span class="code-label">XML</span></pre>
+
+  <h4 id="f09-gitflow">Git Flow Simplificado</h4>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Branch</th><th>Propósito</th><th>Deploy</th></tr></thead>
+      <tbody>
+        <tr><td><code>main</code></td><td>Código em produção</td><td>Automático → staging → manual → prod</td></tr>
+        <tr><td><code>develop</code></td><td>Integração contínua</td><td>Automático → dev env</td></tr>
+        <tr><td><code>feature/*</code></td><td>Desenvolvimento de features</td><td>PR → code review → merge develop</td></tr>
+        <tr><td><code>hotfix/*</code></td><td>Correções urgentes</td><td>PR → merge direto em main</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 09</h4>
+    <div class="qa">
+      <div class="qa-question">Diferença entre CI e CD?</div>
+      <div class="qa-answer">CI (Continuous Integration): automatizar build + testes a cada push — detecta erros cedo. CD pode ser Continuous Delivery (deploy automático até staging, manual para prod) ou Continuous Deployment (deploy automático até prod, sem aprovação).</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é um quality gate?</div>
+      <div class="qa-answer">Barreira automática no pipeline: se cobertura < 80% (JaCoCo), se SpotBugs encontrar bugs, se linting falhar — o pipeline BLOQUEIA. Impede código ruim de ir para produção.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Por que cache de dependências no CI?</div>
+      <div class="qa-answer">Maven baixa dependências do repositório central a cada build. Cache (~/.m2/repository) persiste entre execuções → builds 50-70% mais rápidos. GitHub Actions: actions/cache com hash do pom.xml como key.</div>
+    </div>
+  </div>
+</article>
+
+<hr class="phase-divider"/>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FASE 10 -->
+<!-- ═══════════════════════════════════════════════ -->
+<article class="phase" id="fase-10">
+  <div class="phase-header">
+    <div class="phase-number">10</div>
+    <div>
+      <div class="phase-title">Observabilidade: Actuator, Prometheus, Grafana e Zipkin</div>
+      <div class="phase-subtitle">Métricas · Logs Estruturados · Distributed Tracing · Dashboards</div>
+    </div>
+  </div>
+
+  <!-- SVG: 3 Pillars of Observability -->
+  <div class="diagram-wrapper">
+    <svg viewBox="0 0 660 220" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+      <rect width="660" height="220" fill="#0d1117" rx="8"/>
+      <text x="330" y="30" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700">Os 3 Pilares da Observabilidade</text>
+
+      <!-- Pillar 1: Logs -->
+      <rect x="30" y="50" width="185" height="140" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="122" y="78" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">LOGS</text>
+      <text x="122" y="98" text-anchor="middle" fill="#8b949e" font-size="10">"O que aconteceu?"</text>
+      <line x1="50" y1="108" x2="195" y2="108" stroke="#30363d" stroke-width="1"/>
+      <text x="122" y="128" text-anchor="middle" fill="#c9d1d9" font-size="9">Logback + JSON encoder</text>
+      <text x="122" y="145" text-anchor="middle" fill="#c9d1d9" font-size="9">Structured logging</text>
+      <text x="122" y="162" text-anchor="middle" fill="#c9d1d9" font-size="9">TraceId em cada log</text>
+      <text x="122" y="180" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="600">→ ELK / CloudWatch</text>
+
+      <!-- Pillar 2: Metrics -->
+      <rect x="237" y="50" width="185" height="140" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="330" y="78" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="700">MÉTRICAS</text>
+      <text x="330" y="98" text-anchor="middle" fill="#8b949e" font-size="10">"Qual o estado agora?"</text>
+      <line x1="257" y1="108" x2="402" y2="108" stroke="#30363d" stroke-width="1"/>
+      <text x="330" y="128" text-anchor="middle" fill="#c9d1d9" font-size="9">Micrometer + Prometheus</text>
+      <text x="330" y="145" text-anchor="middle" fill="#c9d1d9" font-size="9">Counter, Gauge, Timer</text>
+      <text x="330" y="162" text-anchor="middle" fill="#c9d1d9" font-size="9">Padrão RED</text>
+      <text x="330" y="180" text-anchor="middle" fill="#58a6ff" font-size="9" font-weight="600">→ Grafana Dashboards</text>
+
+      <!-- Pillar 3: Traces -->
+      <rect x="445" y="50" width="185" height="140" rx="8" fill="#161b22" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="537" y="78" text-anchor="middle" fill="#f0883e" font-size="13" font-weight="700">TRACES</text>
+      <text x="537" y="98" text-anchor="middle" fill="#8b949e" font-size="10">"Onde está o gargalo?"</text>
+      <line x1="465" y1="108" x2="610" y2="108" stroke="#30363d" stroke-width="1"/>
+      <text x="537" y="128" text-anchor="middle" fill="#c9d1d9" font-size="9">Micrometer Tracing</text>
+      <text x="537" y="145" text-anchor="middle" fill="#c9d1d9" font-size="9">TraceId propagado entre</text>
+      <text x="537" y="162" text-anchor="middle" fill="#c9d1d9" font-size="9">serviços via headers</text>
+      <text x="537" y="180" text-anchor="middle" fill="#f0883e" font-size="9" font-weight="600">→ Zipkin / Jaeger</text>
+    </svg>
+    <div class="diagram-caption">Logs (o que aconteceu), Métricas (estado atual), Traces (caminho do request) — os 3 complementares</div>
+  </div>
+
+  <h3 id="f10-red">Padrão RED — Métricas que Importam</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon" style="color: #f85149;">R</div>
+      <h5>Rate (Taxa)</h5>
+      <p>Requests por segundo. <code>rate(http_server_requests_seconds_count[5m])</code></p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="color: #f0883e;">E</div>
+      <h5>Errors (Erros)</h5>
+      <p>Taxa de erros 5xx. <code>rate(...{status=~"5.."}[5m])</code></p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="color: #58a6ff;">D</div>
+      <h5>Duration (Latência)</h5>
+      <p>Percentil 95 e 99. <code>histogram_quantile(0.95, ...)</code></p>
+    </div>
+  </div>
+
+  <h4 id="f10-metrics">Custom Metrics com Micrometer</h4>
+  <pre><code><span class="ann">@Component</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="typ">OrderMetrics</span> {
+
+    <span class="kw">private final</span> <span class="typ">Counter</span> ordersCreated;
+    <span class="kw">private final</span> <span class="typ">Timer</span> orderProcessingTime;
+
+    <span class="kw">public</span> <span class="fn">OrderMetrics</span>(<span class="typ">MeterRegistry</span> registry) {
+        <span class="kw">this</span>.ordersCreated = <span class="typ">Counter</span>.builder(<span class="str">"foodhub.orders.created"</span>)
+            .description(<span class="str">"Total de pedidos criados"</span>)
+            .register(registry);
+        <span class="kw">this</span>.orderProcessingTime = <span class="typ">Timer</span>.builder(<span class="str">"foodhub.orders.processing.time"</span>)
+            .description(<span class="str">"Tempo de processamento do pedido"</span>)
+            .register(registry);
+    }
+
+    <span class="kw">public void</span> <span class="fn">incrementOrdersCreated</span>() { ordersCreated.increment(); }
+}</code><span class="code-label">Java</span></pre>
+
+  <h3 id="f10-tracing">Distributed Tracing</h3>
+  <pre><code><span class="cm"># application.yml — Micrometer Tracing + Zipkin</span>
+management:
+  tracing:
+    sampling:
+      probability: <span class="num">1.0</span>  <span class="cm"># 100% em dev, 10% em prod</span>
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:<span class="num">9411</span>/api/v2/spans
+
+logging:
+  pattern:
+    level: <span class="str">"%5p [${spring.application.name},%X{traceId},%X{spanId}]"</span></code><span class="code-label">YAML</span></pre>
+
+  <div class="callout info">
+    <div class="callout-title">💡 TraceId = Correlação</div>
+    <p>Um request do cliente gera 1 TraceId que propaga automaticamente via headers HTTP entre todos os serviços. Nos logs, o TraceId aparece em cada linha — permitindo rastrear o caminho completo de um request em 4+ serviços com um simples grep.</p>
+  </div>
+
+  <h3 id="f10-checklist">Mapa de Portas Final</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Serviço</th><th>Porta</th><th>Stack</th></tr></thead>
+      <tbody>
+        <tr><td>API Gateway</td><td>8080</td><td>Spring Cloud Gateway</td></tr>
+        <tr><td>order-service</td><td>8081</td><td>Spring Boot + JPA</td></tr>
+        <tr><td>restaurant-service</td><td>8082</td><td>Spring Boot + JPA</td></tr>
+        <tr><td>payment-service</td><td>8083</td><td>Spring Boot + JPA</td></tr>
+        <tr><td>notification-service</td><td>8084</td><td>Spring Boot + Kafka</td></tr>
+        <tr><td>Config Server</td><td>8888</td><td>Spring Cloud Config</td></tr>
+        <tr><td>Eureka Server</td><td>8761</td><td>Spring Cloud Eureka</td></tr>
+        <tr><td>PostgreSQL</td><td>5432</td><td>PostgreSQL 16</td></tr>
+        <tr><td>Kafka</td><td>9092</td><td>Apache Kafka (KRaft)</td></tr>
+        <tr><td>Kafka UI</td><td>8090</td><td>provectus/kafka-ui</td></tr>
+        <tr><td>Prometheus</td><td>9090</td><td>Prometheus</td></tr>
+        <tr><td>Grafana</td><td>3000</td><td>Grafana</td></tr>
+        <tr><td>Zipkin</td><td>9411</td><td>Zipkin</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="interview-section">
+    <h4>💼 Perguntas de Entrevista — Fase 10</h4>
+    <div class="qa">
+      <div class="qa-question">Diferença entre logs, métricas e traces?</div>
+      <div class="qa-answer">Logs: eventos discretos ("o que aconteceu"). Métricas: dados numéricos agregados ("qual o estado atual" — CPU, latência, throughput). Traces: caminho de um request entre serviços ("onde está o gargalo"). Os 3 são complementares — juntos dão observabilidade completa.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é Distributed Tracing e como funciona?</div>
+      <div class="qa-answer">Rastreia um request através de múltiplos serviços: gera TraceId único no gateway, propaga via headers (B3/W3C) em cada chamada HTTP/Kafka. Cada serviço gera spans (unidades de trabalho). Zipkin/Jaeger visualiza o trace completo em cascata.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">O que é o padrão RED?</div>
+      <div class="qa-answer">Rate (requests/s), Errors (5xx/s), Duration (latência p95/p99). Métricas mínimas para monitorar qualquer serviço web. Se RED está saudável, o serviço está saudável. Alternativa: USE (Utilization, Saturation, Errors) para recursos infra.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-question">Como correlacionar logs entre microserviços?</div>
+      <div class="qa-answer">Micrometer Tracing injeta automaticamente traceId e spanId no MDC (Mapped Diagnostic Context). O logging pattern inclui %X{traceId}. Para correlacionar: grep traceId nos logs de todos os serviços → timeline completa do request.</div>
+    </div>
+  </div>
+</article>
+
+
+<!-- ═══════ CHECKLIST FINAL ═══════ -->
+<hr class="phase-divider"/>
+
+<section id="checklist-final">
+  <h3>Checklist de Competências Enterprise</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>#</th><th>Competência</th><th>Fase</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Java 21 (Records, Pattern Matching, Text Blocks)</td><td>01</td></tr>
+        <tr><td>2</td><td>Spring Boot 3.5</td><td>01</td></tr>
+        <tr><td>3</td><td>Spring Data JPA + Hibernate 6</td><td>02</td></tr>
+        <tr><td>4</td><td>PostgreSQL</td><td>02</td></tr>
+        <tr><td>5</td><td>Flyway Migrations</td><td>02</td></tr>
+        <tr><td>6</td><td>REST APIs (CRUD + paginação + ProblemDetail)</td><td>01</td></tr>
+        <tr><td>7</td><td>Spring Security 6 + JWT</td><td>03</td></tr>
+        <tr><td>8</td><td>Apache Kafka (Producer, Consumer, DLQ)</td><td>04</td></tr>
+        <tr><td>9</td><td>JUnit 5 + Mockito</td><td>05</td></tr>
+        <tr><td>10</td><td>Testcontainers</td><td>05</td></tr>
+        <tr><td>11</td><td>SpringDoc OpenAPI / Swagger</td><td>06</td></tr>
+        <tr><td>12</td><td>Docker + Docker Compose</td><td>07</td></tr>
+        <tr><td>13</td><td>Spring Cloud Gateway</td><td>08</td></tr>
+        <tr><td>14</td><td>Eureka (Service Discovery)</td><td>08</td></tr>
+        <tr><td>15</td><td>Config Server (Centralizado)</td><td>08</td></tr>
+        <tr><td>16</td><td>OpenFeign (REST declarativo)</td><td>08</td></tr>
+        <tr><td>17</td><td>Resilience4j (Circuit Breaker)</td><td>08</td></tr>
+        <tr><td>18</td><td>DDD (Aggregates, Bounded Contexts, Events)</td><td>01</td></tr>
+        <tr><td>19</td><td>Arquitetura Hexagonal (Ports &amp; Adapters)</td><td>01</td></tr>
+        <tr><td>20</td><td>SOLID + Clean Code</td><td>Todas</td></tr>
+        <tr><td>21</td><td>Maven</td><td>01</td></tr>
+        <tr><td>22</td><td>Git + Git Flow</td><td>Todas</td></tr>
+        <tr><td>23</td><td>CI/CD (GitHub Actions)</td><td>09</td></tr>
+        <tr><td>24</td><td>Observabilidade (Actuator, Prometheus, Grafana)</td><td>10</td></tr>
+        <tr><td>25</td><td>Distributed Tracing (Zipkin)</td><td>10</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+  <p>FoodHub Backend — Apostila didática gerada com tema Tech Dark</p>
+  <p>Java 21 · Spring Boot 3.5 · Spring Cloud 2025 · 11 Fases · 25+ Competências Enterprise</p>
+</footer>
+
+</div><!-- content-container -->
+</main>
+</div><!-- page-wrapper -->
+
+</body>
+</html>
