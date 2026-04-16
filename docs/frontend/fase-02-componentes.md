@@ -515,6 +515,8 @@ export default DashboardPage;
 | 3 | **Composição vs herança em React?** | React não usa herança de componentes. Em vez disso, usa composição via children e props. Até a documentação oficial lista "Composition vs Inheritance" e conclui que nunca encontraram caso de uso para herança. |
 | 4 | **O que é Tailwind CSS e por que é popular?** | Tailwind é um framework CSS utility-first — em vez de escrever classes semânticas (`.btn-primary`), usa classes atômicas (`bg-primary text-white px-4 py-2`). Vantagens: zero CSS escrito manualmente, design system built-in, tree-shaking remove classes não usadas, sem conflito de estilos. |
 | 5 | **O que é shadcn/ui e como difere de Material UI?** | shadcn/ui são componentes copiados para o projeto (vendored), não um pacote npm. Você tem controle total do código-fonte. Material UI é um pacote externo com opinião de design forte (Material Design). shadcn/ui usa Radix UI (acessível) + Tailwind (customizável). |
+| 6 | **O que é Compound Component Pattern?** | Padrão onde múltiplos componentes trabalham juntos compartilhando estado implícito. Exemplo clássico: `<Select>`, `<SelectTrigger>`, `<SelectItem>` do Radix/shadcn. O pai gerencia o estado, os filhos lêem via Context. Vantagem: API flexível e declaratíva. |
+| 7 | **Quando usar `children` vs props específicas?** | `children` é ideal para **slots genéricos** (ex: `<Card>{conteudo}</Card>`). Props específicas (`title`, `icon`) são melhores quando o componente precisa **controlar o layout** do conteúdo. Combinar ambos é comum: `<Card title="..."> {children} </Card>`. |
 
 ---
 

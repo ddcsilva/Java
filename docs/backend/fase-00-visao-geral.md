@@ -463,4 +463,22 @@ order-service/
 
 ---
 
+## 💼 Perguntas frequentes em entrevistas
+
+1. **"Explique a diferença entre comunicação síncrona e assíncrona em microserviços."** — Síncrona (REST/Feign): o chamador **bloqueia** e espera a resposta — bom para queries que precisam de resultado imediato (ex: validar restaurante antes de criar pedido). Assíncrona (Kafka): o chamador **publica um evento e segue** — bom para reações desacopladas (ex: notificar pagamento após pedido criado). **Trade-off:** síncrona dá acoplamento temporal (se o serviço destino cair, a requisição falha); assíncrona dá eventual consistency (o consumer pode processar depois).
+
+2. **"O que é Arquitetura Hexagonal e por que usar?"** — Também chamada de Ports & Adapters. O domínio fica no centro (hexágono) e não conhece tecnologias externas. Toda comunicação passa por **portas** (interfaces) e **adaptadores** (implementações concretas). Benefício principal: **testabilidade** — o domínio é testável sem Spring, sem banco, sem Kafka. Benefício secundário: **substituibilidade** — trocar JPA por MongoDB ou Kafka por RabbitMQ exige apenas novo adaptador, sem alterar o domínio. É o inverso da arquitetura em camadas tradicional onde o domínio importa JPA.
+
+3. **"Por que Database-per-Service e não um banco compartilhado?"** — Cada microserviço tem seu próprio banco para garantir **autonomia** (deploy independente), **isolamento** (migração de schema sem impactar outros) e **encapsulamento** (dados acessíveis apenas via API, não via JOIN direto). **Trade-off:** perda de transações distribuídas — se precisar de consistência entre serviços, use padrões como Saga ou Outbox.
+
+4. **"Cite os 5 princípios SOLID com exemplos reais do projeto."** — **S (SRP):** `OrderApplicationService` coordena apenas o use case de pedidos, não trata HTTP. **O (OCP):** `OrderEventPublisher` é uma porta — posso adicionar `KafkaPublisher` ou `RabbitPublisher` sem alterar o service. **L (LSP):** qualquer implementação de `OrderRepository` (JPA, in-memory) funciona sem quebrar o contrato. **I (ISP):** portas separadas (`OrderRepository`, `OrderEventPublisher`) ao invés de um super-repository. **D (DIP):** `OrderApplicationService` depende de interfaces (portas), não de implementações concretas (adaptadores).
+
+5. **"Qual a diferença entre DDD e microserviços?"** — DDD é uma **abordagem de modelagem** focada em linguagem ubíqua, bounded contexts, entidades ricas e eventos de domínio. Microserviços é um **estilo arquitetural** de deploy com serviços independentes. DDD **guia** a definição dos limites de cada microserviço — cada bounded context tipicamente vira um serviço. No FoodHub: `order-service` = bounded context de Pedidos, `restaurant-service` = bounded context de Restaurantes.
+
+6. **"Por que Spring Boot + Spring Cloud para microserviços enterprise?"** — Spring Boot simplifica configuração (auto-configuration, starters, embedded server). Spring Cloud fornece padrões enterprise prontos: Service Discovery (Eureka), API Gateway, Config centralizado, Circuit Breaker (Resilience4j), comunicação declarativa (Feign). O ecossistema é o mais maduro em Java para microserviços e é o mais exigido em vagas enterprise no Brasil.
+
+7. **"O que são features do Java 21 que você usa no projeto?"** — **Records:** classes imutáveis para DTOs e eventos de domínio, sem boilerplate. **Pattern Matching for switch:** simplifica transformação de enums (ex: mapear `OrderStatus` para respostas HTTP). **Text Blocks:** SQL em Flyway migrations e queries longas sem concatenação. **Sealed Classes:** (opcional) restringir hierarquias de eventos. Em entrevista, demonstre que escolhe cada feature por **clareza de intenção**, não por moda.
+
+---
+
 > **Próximo passo:** Vá para a [Fase 01 — Fundação](fase-01-fundacao.md) e comece a criar o order-service.

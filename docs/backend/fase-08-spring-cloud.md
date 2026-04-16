@@ -734,4 +734,8 @@ curl http://localhost:8080/api/orders
 
 5. **"OpenFeign vs RestTemplate vs WebClient"** — RestTemplate: síncrono, legado (não recomendado). WebClient: reativo/assíncrono, mais moderno. OpenFeign: declarativo (interface + anotações), integra com Eureka e Resilience4j automaticamente. Para microserviços Spring Cloud, **OpenFeign é o padrão**.
 
+6. **"O que é o padrão Saga para transações distribuídas?"** — Em microserviços, não há transação ACID entre serviços. Saga é uma sequência de transações locais: cada serviço executa e publica um evento. Se um passo falha, executa compensações (rollback distribuído). **Coreografia** (eventos Kafka, sem coordenador) vs **Orquestração** (um serviço coordena). No FoodHub, o fluxo Pedido → Pagamento → Notificação é uma saga coreografada.
+
+7. **"Circuit Breaker: fallback vs fail-fast?"** — **Fallback** quando há alternativa viável (ex: retornar dados do cache quando o restaurant-service cai). **Fail-fast** quando não há alternativa segura — lança erro imediatamente em vez de esperar timeout (protege thread pool). No FoodHub, `getRestaurant()` pode ter fallback com cache; `processPayment()` deve fail-fast porque não há como simular pagamento com segurança.
+
 > **Próximo passo:** [Fase 09 — CI/CD](fase-09-cicd.md) — Pipeline automatizado com GitHub Actions.

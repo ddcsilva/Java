@@ -357,4 +357,8 @@ npx @openapitools/openapi-generator-cli generate \
 
 3. **"O que é API-First?"** — Abordagem onde o contrato OpenAPI é definido **antes** da implementação. O spec vira a source of truth. Permite que frontend e backend trabalhem em paralelo.
 
+4. **"Como documentar endpoints que exigem autenticação no Swagger?"** — Configure um `SecurityScheme` do tipo `bearer` no OpenAPI config. No `@SecurityRequirement(name = "bearer-jwt")` no controller ou no nível global. No Swagger UI, o botão "Authorize" permite colar o JWT e testar endpoints protegidos sem Postman.
+
+5. **"Quais anotações do SpringDoc você mais usa?"** — `@Tag` para agrupar endpoints por recurso, `@Operation(summary)` para descrição curta, `@ApiResponse` para documentar cada status code, `@Schema(example)` nos DTOs para valores de exemplo, `@Parameter` para documentar query params. A chave é: **a documentação deve ser suficiente para o frontend consumir a API sem perguntar ao backend**.
+
 > **Próximo passo:** [Fase 07 — Docker](fase-07-docker.md) — Containerização e Docker Compose com todos os serviços.

@@ -526,6 +526,8 @@ test.describe('Login', () => {
 | 3 | **Quando usar teste E2E vs integração?** | E2E testa fluxos críticos no browser real (login → dashboard → criar pedido). Integração testa componentes isolados com mocks. E2E é lento e frágil — use poucos. Integração é rápido — use bastante. |
 | 4 | **O que é coverage e qual meta realista?** | Coverage mede % de linhas/branches executadas pelos testes. Meta realista: 70-80% geral, 90%+ para utils/hooks. 100% não significa código livre de bugs — foque em testar comportamentos importantes. |
 | 5 | **Por que `retry: false` em testes?** | Em produção, TanStack Query faz retry automático em caso de erro. Em testes, retry causaria timeout e falsos positivos. Desabilitar retry faz o teste falhar imediatamente se a API mocada não responder. |
+| 6 | **Como testar hooks customizados?** | Use `renderHook()` do Testing Library. Permite renderizar o hook isoladamente, chamar suas funções via `result.current`, e fazer `waitFor` em updates assíncronos. Para hooks que dependem de providers (QueryClient, Router), envolva com wrapper. |
+| 7 | **O que é a abordagem "teste como o usuário"?** | Testing Library incentiva testar por behavior, não por implementação. Use `getByRole('button')` em vez de `getByTestId('submit-btn')`. Use `userEvent.click()` em vez de `fireEvent.click()`. Se o texto ou role muda, o teste quebra por motivo válido — significa que a UX mudou. |
 
 ---
 

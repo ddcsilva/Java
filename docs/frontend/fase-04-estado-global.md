@@ -457,6 +457,8 @@ function Sidebar() {
 | 3 | **O que é o array de dependências do useEffect?** | Lista de valores que o efeito "observa". Quando um valor muda, o efeito re-executa. Array vazio = executa uma vez. Sem array = executa em todo render (geralmente bug). |
 | 4 | **Quando usar useMemo vs useCallback?** | `useMemo` cacheia um **valor** (resultado de cálculo). `useCallback` cacheia uma **função** (referência estável). Ambos recomputam quando suas dependências mudam. Use quando há impacto de performance mensurável. |
 | 5 | **O que são custom hooks?** | Funções que usam hooks internamente e encapsulam lógica reutilizável. Começam com `use`. Permitem extrair lógica stateful sem alterar a hierarquia de componentes. É como criar um trait/mixin reutilizável. |
+| 6 | **O que é a "closure trap" no useEffect?** | Quando o efeito captura uma variável de state no momento da criação da closure, mas o state muda depois. O efeito ainda vê o valor antigo. Solução: incluir a variável no array de dependências, ou usar `useRef` para acessar o valor mais recente sem disparar re-execução do efeito. É uma das perguntas mais comuns em entrevistas React. |
+| 7 | **Quando usar Context API vs Zustand?** | Context API é nativa e boa para estado que muda **raramente** (tema, locale, auth). Problema: quando o valor do Context muda, **todos** os consumers re-renderizam, mesmo que usem apenas parte do estado. Zustand resolve isso com **selectors granulares** — cada componente re-renderiza apenas quando o slice que consome muda. Para estado frequente, Zustand; para estado raro, Context. |
 
 ---
 

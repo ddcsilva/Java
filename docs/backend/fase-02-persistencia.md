@@ -624,4 +624,8 @@ SELECT pg_reload_conf();
 
 5. **"O que são JPA Specifications?"** — Implementação do pattern **Specification** (DDD) que permite compor critérios de busca dinamicamente. Ideal para filtros de busca com combinações variáveis de parâmetros.
 
+6. **"Explique os estados do ciclo de vida de uma entidade JPA."** — **Transient:** objeto criado com `new`, JPA não conhece. **Managed:** após `persist()` ou `find()`, está no Persistence Context (1st level cache) — mudanças são detectadas automaticamente (dirty checking). **Detached:** após fechar a Session ou `detach()` — parece managed mas não é rastreado. **Removed:** marcado para deleção com `remove()`. Em entrevista, o entrevistador quer ouvir: *"Dirty checking funciona apenas em entidades Managed — se a entidade é Detached, preciso de `merge()` para reacoplar."*
+
+7. **"O que é 1st level cache vs 2nd level cache no Hibernate?"** — **1st level cache** é o Persistence Context (por transação) — garante identity (`find(1)` duas vezes retorna a mesma instância). **2nd level cache** é compartilhado entre transações (configurável, ex: Ehcache/Caffeine) — cacheia entidades frequentemente lidas e raramente alteradas. **Query cache** cacheia resultados de queries. Trade-off: 2nd level cache adiciona complexidade de invalidação. Use apenas para dados quase estáticos (categorias, configurações).
+
 > **Próximo passo:** [Fase 03 — Segurança](fase-03-seguranca.md) — Spring Security 6, JWT e controle de acesso baseado em roles.

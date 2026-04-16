@@ -504,6 +504,8 @@ Antes de começar a Fase 01, você precisa ter instalado:
 | 5 | **Diferencie componentes controlados e não-controlados.** | Controlado: o React controla o valor do input via state (`value={state}`). Não-controlado: o DOM controla — React acessa via `ref`. Controlados são preferidos para validação e form state consistente. |
 | 6 | **O que é prop drilling e como evitar?** | Passar props por muitos níveis de componentes intermediários. Evita-se com Context API, Zustand ou TanStack Query (para dados do servidor). |
 | 7 | **O que são custom hooks?** | Funções `use*` que encapsulam lógica reutilizável com hooks. Ex: `useDebounce`, `useLocalStorage`. Seguem as mesmas regras dos hooks nativos. |
+| 8 | **O que mudou no React 19?** | Actions (funções assíncronas em transições), `useActionState` para forms com server actions, `useOptimistic` para UI otimista, `use()` para ler Promises/Context em render. O React Compiler (opt-in) pode memoizar automaticamente eliminando `useMemo`/`useCallback` manuais. Para SPAs como FoodHub, o principal ganho é melhoria de performance e o runtime do Compiler. |
+| 9 | **Qual a diferença entre SSR, CSR e SSG?** | **CSR** (Client-Side Rendering): o browser baixa um HTML vazio e o JS renderiza tudo — é o que o FoodHub usa (SPA com Vite). **SSR** (Server-Side Rendering): o servidor gera HTML completo em cada request (Next.js). **SSG** (Static Site Generation): HTML gerado no build time. CSR é ideal para dashboards/apps autenticados. SSR/SSG para conteúdo público com SEO. |
 
 ---
 

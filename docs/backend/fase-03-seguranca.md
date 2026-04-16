@@ -631,4 +631,8 @@ http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
 5. **"Como implementar refresh tokens?"** — Access token (curta duração, ~15min) + Refresh token (longa duração, ~7d, armazenado em banco). Quando o access expira, o client envia o refresh token para obter um novo par. O refresh token pode ser revogado.
 
+6. **"Qual a diferença entre OAuth2 e JWT?"** — Não são comparáveis diretamente. **OAuth2** é um **protocolo de autorização** (define fluxos como Authorization Code, Client Credentials). **JWT** é um **formato de token** (Header.Payload.Signature). OAuth2 pode usar JWT como formato de token. No FoodHub, usamos JWT sem OAuth2 porque é comunicação interna entre SPA e API própria. OAuth2 seria necessário se integrássemos login com Google/GitHub.
+
+7. **"Se um JWT é comprometido, como revogar?"** — JWT é stateless — não há como "revogar" nativamente. Soluções: (1) **vida curta** (15min) + refresh token rotacionado, (2) **blacklist** de tokens revogados em Redis (verifica em cada request), (3) **versão de sessão** no banco — incrementa ao fazer logout, rejeita tokens com versão antiga. Trade-off: blacklist/versão adicionam estado, perdendo parte da vantagem stateless.
+
 > **Próximo passo:** [Fase 04 — Mensageria](fase-04-mensageria.md) — Apache Kafka para comunicação assíncrona entre microserviços.
