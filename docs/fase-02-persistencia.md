@@ -189,7 +189,7 @@ Quando você chama `orderRepository.findAll()`, o Hibernate traz **todas as colu
 ### Interface Projection
 
 ```java
-package com.foodhub.order.domain.repository;
+package com.foodhub.order.application.port.out;
 
 /**
  * Projection que retorna apenas campos necessários para listagem.
@@ -284,7 +284,7 @@ public abstract class BaseEntity {
 ### Habilitar JPA Auditing
 
 ```java
-package com.foodhub.order.infrastructure.config;
+package com.foodhub.order.adapter.out.persistence;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -383,7 +383,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>,
 ### Criar specifications
 
 ```java
-package com.foodhub.order.domain.repository;
+package com.foodhub.order.application.port.out;
 
 import com.foodhub.order.domain.model.Order;
 import com.foodhub.order.domain.model.OrderStatus;

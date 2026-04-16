@@ -93,7 +93,7 @@ Use para acompanhar seu progresso. Cada item é praticado neste projeto:
 | 16 | Spring Cloud Eureka | Service Discovery | ⬜ |
 | 17 | Spring Cloud Config | Configuração centralizada | ⬜ |
 | 18 | DDD (Entidades ricas, Aggregates, Events) | Camada domain/ | ⬜ |
-| 19 | Clean Architecture (camadas, inversão de dep.) | Estrutura de pacotes | ⬜ |
+| 19 | Arquitetura Hexagonal (Ports & Adapters, inversão de dep.) | Estrutura de pacotes | ⬜ |
 | 20 | SOLID + Clean Code | Código inteiro | ⬜ |
 | 21 | CI/CD | GitHub Actions | ⬜ |
 | 22 | Observabilidade (Actuator, Prometheus, Grafana) | Métricas e health checks | ⬜ |

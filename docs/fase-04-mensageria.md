@@ -153,7 +153,7 @@ app:
 ## 4.5 Configurar Tópicos Kafka
 
 ```java
-package com.foodhub.order.infrastructure.config;
+package com.foodhub.order.adapter.out.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
@@ -162,14 +162,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-@RequiredArgsConstructor
 public class KafkaTopicConfig {
 
     @Value("${app.kafka.topics.order-created}")
-    private final String orderCreatedTopic;
+    private String orderCreatedTopic;
 
     @Value("${app.kafka.topics.order-status-changed}")
-    private final String orderStatusChangedTopic;
+    private String orderStatusChangedTopic;
 
     @Bean
     public NewTopic orderCreatedTopic() {
@@ -250,7 +249,7 @@ public record OrderStatusChangedEvent(
 A interface da Fase 01 só tinha `publish(OrderCreatedEvent)`. Agora que temos dois tipos de evento, atualize-a:
 
 ```java
-package com.foodhub.order.application.port;
+package com.foodhub.order.application.port.out;
 
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 import com.foodhub.order.domain.event.OrderStatusChangedEvent;
@@ -277,9 +276,9 @@ public interface OrderEventPublisher {
 Substitua a implementação `LoggingOrderEventPublisher` pela versão com Kafka:
 
 ```java
-package com.foodhub.order.infrastructure.messaging;
+package com.foodhub.order.adapter.out.messaging;
 
-import com.foodhub.order.application.port.OrderEventPublisher;
+import com.foodhub.order.application.port.out.OrderEventPublisher;
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 import com.foodhub.order.domain.event.OrderStatusChangedEvent;
 import lombok.RequiredArgsConstructor;
@@ -290,7 +289,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class KafkaOrderEventPublisher implements OrderEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaOrderEventPublisher.class);
@@ -298,10 +296,14 @@ public class KafkaOrderEventPublisher implements OrderEventPublisher {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Value("${app.kafka.topics.order-created}")
-    private final String orderCreatedTopic;
+    private String orderCreatedTopic;
 
     @Value("${app.kafka.topics.order-status-changed}")
-    private final String orderStatusChangedTopic;
+    private String orderStatusChangedTopic;
+
+    public KafkaOrderEventPublisher(KafkaTemplate<String, Object> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     public void publish(OrderCreatedEvent event) {
@@ -355,7 +357,7 @@ public class KafkaOrderEventPublisher implements OrderEventPublisher {
 ### No restaurant-service (exemplo de consumer)
 
 ```java
-package com.foodhub.restaurant.infrastructure.messaging;
+package com.foodhub.restaurant.adapter.out.messaging;
 
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
@@ -401,7 +403,7 @@ public class OrderCreatedConsumer {
 ### Consumidor com retry automático e DLQ
 
 ```java
-package com.foodhub.order.infrastructure.config;
+package com.foodhub.order.adapter.out.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -101,7 +101,7 @@ app:
 ## 3.4 Propriedades de Segurança (Config Tipada)
 
 ```java
-package com.foodhub.order.infrastructure.config;
+package com.foodhub.order.adapter.in.web.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -131,9 +131,9 @@ public class OrderServiceApplication {
 ## 3.5 JwtService — Geração e Validação de Tokens
 
 ```java
-package com.foodhub.order.infrastructure.security;
+package com.foodhub.order.adapter.in.web.security;
 
-import com.foodhub.order.infrastructure.config.JwtProperties;
+import com.foodhub.order.adapter.in.web.config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -230,7 +230,7 @@ public class JwtService {
 ## 3.6 JwtAuthenticationFilter
 
 ```java
-package com.foodhub.order.infrastructure.security;
+package com.foodhub.order.adapter.in.web.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -316,7 +316,7 @@ Request → JwtAuthenticationFilter → SecurityFilterChain → Controller
 ## 3.7 SecurityConfig — Configuração do Spring Security 6
 
 ```java
-package com.foodhub.order.infrastructure.security;
+package com.foodhub.order.adapter.in.web.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -400,9 +400,9 @@ CSRF (Cross-Site Request Forgery) é um ataque onde um site malicioso envia uma 
 Para este projeto, criamos um endpoint simplificado que gera tokens. Em produção, haveria um **auth-service** dedicado com tabelas de usuários, bcrypt para senhas, refresh tokens, etc.
 
 ```java
-package com.foodhub.order.api.controller;
+package com.foodhub.order.adapter.in.web.controller;
 
-import com.foodhub.order.infrastructure.security.JwtService;
+import com.foodhub.order.adapter.in.web.security.JwtService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

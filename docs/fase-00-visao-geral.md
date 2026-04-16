@@ -175,23 +175,23 @@ Java 17 é o LTS mais consolidado. Java 21 é o LTS mais recente e já está sen
 
 ---
 
-## 7. Estrutura de Pacotes (por Microserviço)
+## 7. Estrutura de Pacotes — Arquitetura Hexagonal (Ports & Adapters)
 
-Cada microserviço segue **DDD + Clean Architecture adaptada**:
+Cada microserviço segue **DDD + Arquitetura Hexagonal (Ports & Adapters)**:
+
+> **Por que Hexagonal?** — É a arquitetura mais adotada por **bancos, fintechs e grandes empresas** no Brasil. O conceito central é simples: o domínio (hexágono interno) não conhece o mundo externo. Toda comunicação passa por **portas** (interfaces) e **adaptadores** (implementações concretas). Isso permite trocar banco de dados, broker de mensageria ou framework web sem alterar uma linha de lógica de negócio.
 
 ```
 order-service/
 ├── src/main/java/com/foodhub/order/
-│   ├── OrderServiceApplication.java           # @SpringBootApplication
+│   ├── OrderServiceApplication.java           # @SpringBootApplication (Composition Root)
 │   │
-│   ├── domain/                                 # CAMADA DE DOMÍNIO (Java puro)
+│   ├── domain/                                 # HEXÁGONO INTERNO — Regras de negócio (Java puro)
 │   │   ├── model/                              # Entidades JPA e Value Objects
 │   │   │   ├── Order.java                      # Aggregate Root
 │   │   │   ├── OrderItem.java                  # Entidade filha
 │   │   │   ├── OrderStatus.java                # Enum
 │   │   │   └── Money.java                      # Value Object (opcional)
-│   │   ├── repository/                         # Interfaces (portas de saída)
-│   │   │   └── OrderRepository.java            # extends JpaRepository
 │   │   ├── service/                            # Regras de negócio puras (opcional)
 │   │   │   └── OrderDomainService.java
 │   │   ├── event/                              # Eventos de domínio (records)
@@ -199,37 +199,47 @@ order-service/
 │   │   └── exception/                          # Exceções de domínio
 │   │       └── OrderNotFoundException.java
 │   │
-│   ├── application/                            # CAMADA DE APLICAÇÃO (orquestra use cases)
+│   ├── application/                            # CAMADA DE APLICAÇÃO (Use Cases + Portas)
+│   │   ├── port/                               # PORTAS — Contratos do hexágono
+│   │   │   ├── in/                             # Portas de ENTRADA (o que o app sabe fazer)
+│   │   │   │   └── CreateOrderUseCase.java     # Interface do use case (opcional)
+│   │   │   └── out/                            # Portas de SAÍDA (o que o app precisa)
+│   │   │       ├── OrderRepository.java        # Porta para persistência (Spring Data)
+│   │   │       └── OrderEventPublisher.java    # Porta para publicar eventos
+│   │   ├── usecase/                            # Implementações dos use cases
+│   │   │   └── OrderApplicationService.java    # Orquestra domínio + portas
 │   │   ├── dto/                                # Data Transfer Objects (records)
 │   │   │   ├── CreateOrderRequest.java
 │   │   │   ├── OrderResponse.java
 │   │   │   ├── OrderItemRequest.java
 │   │   │   ├── OrderItemResponse.java
 │   │   │   └── UpdateOrderStatusRequest.java
-│   │   ├── service/                            # Application Services (use cases)
-│   │   │   └── OrderApplicationService.java
-│   │   ├── mapper/                             # Conversão Entity <-> DTO
-│   │   │   └── OrderMapper.java
-│   │   └── port/                               # Portas de saída (interfaces)
-│   │       ├── RestaurantClient.java           # Interface para chamada REST
-│   │       └── OrderEventPublisher.java        # Interface para publicar eventos
+│   │   └── mapper/                             # Conversão Entity <-> DTO
+│   │       └── OrderMapper.java
 │   │
-│   ├── infrastructure/                         # CAMADA DE INFRAESTRUTURA (implementações)
-│   │   ├── messaging/                          # Kafka
-│   │   │   ├── KafkaOrderEventPublisher.java   # Implementa OrderEventPublisher
-│   │   │   └── PaymentEventListener.java       # Consome eventos de pagamento
-│   │   ├── client/                             # OpenFeign
-│   │   │   └── RestaurantFeignClient.java      # Implementa RestaurantClient
-│   │   └── config/                             # Configurações diversas
-│   │       ├── SecurityConfig.java
-│   │       ├── KafkaConfig.java
-│   │       └── OpenApiConfig.java
-│   │
-│   └── api/                                    # CAMADA DE APRESENTAÇÃO (HTTP)
-│       ├── controller/                         # REST Controllers
-│       │   └── OrderController.java
-│       └── exception/                          # Exception handlers globais
-│           └── GlobalExceptionHandler.java
+│   └── adapter/                                # ADAPTADORES — Implementações concretas
+│       ├── in/                                 # Adaptadores de ENTRADA (quem chama o app)
+│       │   └── web/                            # HTTP/REST
+│       │       ├── controller/                 # REST Controllers
+│       │       │   └── OrderController.java    # Chama use case via porta
+│       │       ├── exception/                  # Exception handlers globais
+│       │       │   └── GlobalExceptionHandler.java
+│       │       └── security/                   # Segurança HTTP (JWT, filtros)
+│       │           ├── JwtService.java
+│       │           ├── JwtAuthenticationFilter.java
+│       │           └── SecurityConfig.java
+│       └── out/                                # Adaptadores de SAÍDA (o app chama)
+│           ├── persistence/                    # JPA configs
+│           │   └── JpaConfig.java
+│           ├── messaging/                      # Kafka (implementa OrderEventPublisher)
+│           │   ├── KafkaOrderEventPublisher.java
+│           │   ├── PaymentEventListener.java
+│           │   └── KafkaConfig.java
+│           ├── client/                         # OpenFeign (comunicação inter-serviço)
+│           │   ├── RestaurantClient.java        # @FeignClient para restaurant-service
+│           │   └── RestaurantClientFallback.java
+│           └── config/                         # Configs de infraestrutura
+│               └── OpenApiConfig.java
 │
 ├── src/main/resources/
 │   ├── application.yml                         # Configuração principal
@@ -241,28 +251,33 @@ order-service/
 │
 ├── src/test/java/com/foodhub/order/
 │   ├── domain/model/OrderTest.java             # Testes unitários de domínio
-│   ├── application/service/OrderApplicationServiceTest.java  # Testes com Mockito
-│   ├── api/controller/OrderControllerTest.java # @WebMvcTest
+│   ├── application/usecase/OrderApplicationServiceTest.java  # Testes com Mockito
+│   ├── adapter/in/web/controller/OrderControllerTest.java # @WebMvcTest
 │   └── integration/OrderIntegrationTest.java   # @SpringBootTest + Testcontainers
 │
 ├── Dockerfile
 └── pom.xml
 ```
 
-### Regra de Dependência (Clean Architecture)
+> **💡 Convenção de nomes:** Portas em `application/port/out/` são **interfaces Java** — o pacote já indica que são portas, dispensando sufixo "Port". Spring Data repositories (como `OrderRepository extends JpaRepository`) naturalmente servem como portas de saída por serem interfaces. O `@FeignClient` (`RestaurantClient`) é usado diretamente como adaptador para simplicidade; em produção, extraia uma porta `RestaurantPort` em `application/port/out/` e faça o Feign implementá-la.
+
+### Regra de Dependência (Arquitetura Hexagonal)
 
 ```
-    api  →  application  →  domain
-                              ↑
-              infrastructure ─┘
+    adapter.in  →  application  →  domain
+       (web)                        ↑
+                    adapter.out  ───┘
+               (persistence, messaging, client)
 ```
 
-- **domain/** não depende de nada externo. É Java puro (com anotações JPA como exceção pragmática).
-- **application/** depende de domain/. Orquestra, mas não conhece detalhes de infra.
-- **infrastructure/** implementa as interfaces de domain/ e application/ (inversão de dependência).
-- **api/** depende de application/ para delegar requests.
+- **domain/** é o hexágono interno. Não depende de nada externo. É Java puro (com anotações JPA como exceção pragmática).
+- **application/** contém os use cases e as **portas** (interfaces). Depende do domínio. Não conhece detalhes de infraestrutura.
+- **adapter/out/** implementa as **portas de saída** (inversão de dependência). Banco, Kafka, Feign — tudo é adaptador.
+- **adapter/in/** são os **adaptadores de entrada** — controllers, filtros, listeners. Chamam os use cases via portas de entrada.
 
-> **Por que a entidade JPA está no domain/?** — Em Clean Architecture pura, a entidade JPA ficaria em infrastructure/ e haveria uma entidade de domínio separada. Isso é over-engineering para a maioria dos projetos. A abordagem pragmática (e a mais usada no mercado) é manter a entidade JPA no domain/ com anotações JPA. O importante é que a **lógica de negócio** fique na entidade (Rich Domain Model), não espalhada em services.
+> **Conceito-chave:** As portas são **interfaces** que vivem em `application/port/`. Os adaptadores são **implementações concretas** que vivem em `adapter/`. A dependência sempre aponta para **dentro** do hexágono, nunca para fora. Isso é a **inversão de dependência** em ação.
+
+> **Por que a entidade JPA está no domain/?** — Em arquitetura hexagonal pura, a entidade JPA ficaria em `adapter/out/persistence/` e haveria uma entidade de domínio separada. Isso é over-engineering para a maioria dos projetos. A abordagem pragmática (e a mais usada no mercado, inclusive em bancos e fintechs) é manter a entidade JPA no domain/ com anotações JPA. O importante é que a **lógica de negócio** fique na entidade (Rich Domain Model), não espalhada em services.
 
 ---
 
@@ -397,10 +412,10 @@ order-service/
 | Campo | Valor |
 |---|---|
 | **Contexto** | Precisamos de uma estrutura clara que reflita a arquitetura |
-| **Decisão** | DDD + Clean Architecture pragmática (domain → application → api, com infrastructure ao lado) |
-| **Justificativa** | Separa negócio de infraestrutura; facilita testes; alinhado com práticas enterprise |
+| **Decisão** | DDD + Arquitetura Hexagonal (Ports & Adapters) — domain → application (ports + use cases) → adapters (in/out) |
+| **Justificativa** | Separa negócio de infraestrutura; facilita testes; é a arquitetura mais adotada em bancos e fintechs no Brasil; permite trocar qualquer adaptador sem alterar o domínio |
 | **Consequência** | Mais pacotes que o padrão simplificado; entidades JPA ficam no domain/ por pragmatismo |
-| **Alternativas descartadas** | Hexagonal completa (excesso de abstrações para este contexto), package-by-feature (não evidencia as camadas) |
+| **Alternativas descartadas** | Clean Architecture pura (nomenclatura menos intuitiva que Ports & Adapters), package-by-feature (não evidencia as fronteiras do hexágono) |
 
 ---
 
@@ -408,11 +423,11 @@ order-service/
 
 | Princípio | Onde no FoodHub |
 |---|---|
-| **S** — Single Responsibility | Cada classe tem 1 razão para mudar: Controller (HTTP), Service (orquestração), Entity (regras de domínio), Repository (persistência) |
-| **O** — Open/Closed | `OrderEventPublisher` (interface) pode ter novas implementações (Kafka, RabbitMQ, SNS) sem alterar o código que a usa |
-| **L** — Liskov Substitution | `RestaurantClient` (interface) pode ser substituída por `RestaurantFeignClient` ou por um mock em testes |
-| **I** — Interface Segregation | `OrderEventPublisher` publica eventos; `RestaurantClient` consulta restaurantes. Não temos uma interface "faz tudo" |
-| **D** — Dependency Inversion | `OrderApplicationService` depende de `OrderEventPublisher` (abstração), não de `KafkaOrderEventPublisher` (implementação concreta) |
+| **S** — Single Responsibility | Cada classe tem 1 razão para mudar: Controller (adaptador de entrada), Use Case (orquestração), Entity (regras de domínio), Repository (porta de saída) |
+| **O** — Open/Closed | `OrderEventPublisher` (porta de saída) pode ter novas implementações (Kafka, RabbitMQ, SNS) sem alterar o código que a usa |
+| **L** — Liskov Substitution | `OrderEventPublisher` (porta) pode ser implementada por `KafkaOrderEventPublisher` ou por `LoggingOrderEventPublisher` (no-op para testes) |
+| **I** — Interface Segregation | `OrderEventPublisher` publica eventos; `OrderRepository` persiste pedidos. Cada porta tem uma responsabilidade |
+| **D** — Dependency Inversion | `OrderApplicationService` depende de `OrderEventPublisher` (porta/abstração), não de `KafkaOrderEventPublisher` (adaptador/implementação concreta) |
 
 ---
 
@@ -438,7 +453,7 @@ order-service/
 | 16 | Spring Cloud OpenFeign | Comunicação REST entre serviços | 08 |
 | 17 | Resilience4j (Circuit Breaker) | Resiliência na comunicação entre serviços | 08 |
 | 18 | DDD (Entidades ricas, Aggregates, Events) | Camada domain/ com Rich Domain Model | 01 |
-| 19 | Clean Architecture (camadas, inversão de dependência) | Estrutura de pacotes com portas e adaptadores | 01 |
+| 19 | Arquitetura Hexagonal (Ports & Adapters, inversão de dependência) | Estrutura de pacotes com portas e adaptadores | 01 |
 | 20 | SOLID + Clean Code | Aplicado no código inteiro | Todas |
 | 21 | Maven | Build, dependências, multi-module | 01 |
 | 22 | Git + Git Flow | Branches feature/develop/main | Todas |

@@ -406,10 +406,10 @@ public class OrderServiceApplication { ... }
 
 ### Declarar o Feign Client
 
-> **🏗️ Arquitetura (Clean Architecture):** Na fase-00, definimos a interface `RestaurantClient` em `application/port/` como uma porta de saída. O `@FeignClient` abaixo é o **adaptador** que implementa essa porta. Em produção, mantenha a interface de porta e faça o Feign Client implementar ela. Para simplicidade didática, usamos a interface do Feign diretamente.
+> **🏗️ Arquitetura Hexagonal (Ports & Adapters):** Na fase-00, definimos a interface `RestaurantPort` em `application/port/out/` como uma **porta de saída**. O `@FeignClient` abaixo é o **adaptador de saída** que implementa essa porta. Em produção, mantenha a interface de porta e faça o Feign Client implementá-la. Para simplicidade didática, usamos a interface do Feign diretamente.
 
 ```java
-package com.foodhub.order.infrastructure.client;
+package com.foodhub.order.adapter.out.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -524,7 +524,7 @@ FECHADO (normal)           ABERTO (falha)            SEMI-ABERTO
 #### Fallback Factory
 
 ```java
-package com.foodhub.order.infrastructure.client;
+package com.foodhub.order.adapter.out.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

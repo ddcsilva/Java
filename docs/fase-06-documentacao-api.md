@@ -59,7 +59,7 @@ springdoc:
 ## 6.4 Configuração Java do OpenAPI
 
 ```java
-package com.foodhub.order.infrastructure.config;
+package com.foodhub.order.adapter.out.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -118,10 +118,10 @@ public class OpenApiConfig {
 ### OrderController documentado
 
 ```java
-package com.foodhub.order.api.controller;
+package com.foodhub.order.adapter.in.web.controller;
 
 import com.foodhub.order.application.dto.*;
-import com.foodhub.order.application.service.OrderApplicationService;
+import com.foodhub.order.application.usecase.OrderApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

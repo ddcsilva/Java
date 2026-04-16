@@ -12,7 +12,7 @@
 - Criar REST API com validação (`@Valid`) e paginação
 - Tratar erros com **ProblemDetail (RFC 7807)**
 - Aplicar **Flyway** para migrations de banco
-- Entender **inversão de dependência** com interfaces (SOLID)
+- Entender **inversão de dependência** com portas e adaptadores (Arquitetura Hexagonal)
 
 ---
 
@@ -678,10 +678,10 @@ public record OrderCreatedEvent(
 
 ---
 
-## 1.9 Repository (Interface — Porta de Saída)
+## 1.9 Repository (Porta de Saída — Outbound Port)
 
 ```java
-package com.foodhub.order.domain.repository;
+package com.foodhub.order.application.port.out;
 
 import com.foodhub.order.domain.model.Order;
 import com.foodhub.order.domain.model.OrderStatus;
@@ -725,22 +725,22 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 }
 ```
 
-> **Por que o repository fica em domain/ e não em infrastructure/?** — Em DDD puro, a interface do repositório é uma "porta de saída" do domínio. A implementação concreta (JPA) é a "adaptador". No Spring Data JPA, a interface `extends JpaRepository` já acopla ao Spring, mas isso é uma troca pragmática aceita pela maioria dos projetos. O importante é que a interface esteja no domain/ — o application service depende da interface, não de uma implementação concreta.
+> **Por que o repository fica em application/port/out/ e não em domain/?** — Em Arquitetura Hexagonal, a interface do repositório é uma **porta de saída** — ela define o que a aplicação precisa, sem saber como é implementado. A interface `extends JpaRepository` já acopla ao Spring Data, mas isso é uma troca pragmática aceita pela maioria dos projetos (inclusive em bancos e fintechs). O importante é que o use case (`OrderApplicationService`) dependa da **porta** (interface), não de uma implementação concreta.
 
 ---
 
-## 1.10 Portas de Saída (Interfaces para Infra)
+## 1.10 Portas de Saída (Outbound Ports)
 
 ### OrderEventPublisher
 
 ```java
-package com.foodhub.order.application.port;
+package com.foodhub.order.application.port.out;
 
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 
 /**
  * Porta de saída para publicação de eventos.
- * A implementação concreta (Kafka) fica em infrastructure/.
+ * A implementação concreta (Kafka) fica em adapter/out/messaging/.
  * Na Fase 01, usamos uma implementação "no-op" (não faz nada).
  */
 public interface OrderEventPublisher {
@@ -748,12 +748,12 @@ public interface OrderEventPublisher {
 }
 ```
 
-### Implementação temporária (No-Op — sem Kafka ainda)
+### Implementação temporária (No-Op — Adaptador de saída sem Kafka)
 
 ```java
-package com.foodhub.order.infrastructure.messaging;
+package com.foodhub.order.adapter.out.messaging;
 
-import com.foodhub.order.application.port.OrderEventPublisher;
+import com.foodhub.order.application.port.out.OrderEventPublisher;
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -762,6 +762,7 @@ import org.springframework.stereotype.Component;
 /**
  * Implementação temporária que apenas loga o evento.
  * Será substituída pelo KafkaOrderEventPublisher na Fase 04.
+ * Este é um ADAPTADOR DE SAÍDA — implementa a porta OrderEventPublisher.
  */
 @Component
 public class LoggingOrderEventPublisher implements OrderEventPublisher {
@@ -776,7 +777,7 @@ public class LoggingOrderEventPublisher implements OrderEventPublisher {
 }
 ```
 
-> **Por que uma implementação temporária?** — Na Fase 01, ainda não temos Kafka. Mas o `OrderApplicationService` precisa de um `OrderEventPublisher` para funcionar. Em vez de comentar o código ou usar flags, criamos uma implementação que simplesmente loga. Na Fase 04, criamos `KafkaOrderEventPublisher` e usamos `@Primary` ou `@Profile` para selecionar a implementação correta. Isso é o **princípio Open/Closed (SOLID)** em ação.
+> **Por que uma implementação temporária?** — Na Fase 01, ainda não temos Kafka. Mas o `OrderApplicationService` (use case) precisa de um `OrderEventPublisher` (porta de saída) para funcionar. Em vez de comentar o código ou usar flags, criamos um **adaptador** que simplesmente loga. Na Fase 04, criamos `KafkaOrderEventPublisher` e usamos `@Primary` ou `@Profile` para selecionar o adaptador correto. Isso é Arquitetura Hexagonal em ação: o use case depende da porta (interface), e os adaptadores são intercambiáveis.
 
 ---
 
@@ -952,17 +953,17 @@ public class OrderMapper {
 ## 1.13 Application Service (Use Case)
 
 ```java
-package com.foodhub.order.application.service;
+package com.foodhub.order.application.usecase;
 
 import com.foodhub.order.application.dto.*;
 import com.foodhub.order.application.mapper.OrderMapper;
-import com.foodhub.order.application.port.OrderEventPublisher;
+import com.foodhub.order.application.port.out.OrderEventPublisher;
 import com.foodhub.order.domain.event.OrderCreatedEvent;
 import com.foodhub.order.domain.exception.OrderNotFoundException;
 import com.foodhub.order.domain.model.Order;
 import com.foodhub.order.domain.model.OrderItem;
 import com.foodhub.order.domain.model.OrderStatus;
-import com.foodhub.order.domain.repository.OrderRepository;
+import com.foodhub.order.application.port.out.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1082,13 +1083,13 @@ Marcar a classe inteira como `readOnly = true` e sobrescrever com `@Transactiona
 
 ---
 
-## 1.14 REST Controller
+## 1.14 REST Controller (Adaptador de Entrada)
 
 ```java
-package com.foodhub.order.api.controller;
+package com.foodhub.order.adapter.in.web.controller;
 
 import com.foodhub.order.application.dto.*;
-import com.foodhub.order.application.service.OrderApplicationService;
+import com.foodhub.order.application.usecase.OrderApplicationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -1154,10 +1155,10 @@ Como estamos alterando apenas o status do pedido (não o pedido todo), **PATCH**
 
 ---
 
-## 1.15 Exception Handler Global
+## 1.15 Exception Handler Global (Adaptador de Entrada)
 
 ```java
-package com.foodhub.order.api.exception;
+package com.foodhub.order.adapter.in.web.exception;
 
 import com.foodhub.order.domain.exception.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -1359,13 +1360,13 @@ git commit -m "feat: criar order-service com Spring Boot 3.5
 | Exceção de domínio | `OrderNotFoundException.java` |
 | Evento de domínio (record) | `OrderCreatedEvent.java` |
 | Repository (porta de saída) | `OrderRepository.java` |
-| Interface para eventos | `OrderEventPublisher.java` |
-| Implementação temporária (log) | `LoggingOrderEventPublisher.java` |
+| Interface para eventos (porta de saída) | `OrderEventPublisher.java` |
+| Adaptador temporário (log) | `LoggingOrderEventPublisher.java` |
 | DTOs (5 records) | `CreateOrderRequest`, `OrderItemRequest`, `OrderResponse`, `OrderItemResponse`, `UpdateOrderStatusRequest` |
 | Mapper | `OrderMapper.java` |
 | Application Service | `OrderApplicationService.java` |
-| Controller REST | `OrderController.java` |
-| Exception Handler | `GlobalExceptionHandler.java` |
+| Controller REST (adaptador de entrada) | `OrderController.java` |
+| Exception Handler (adaptador de entrada) | `GlobalExceptionHandler.java` |
 | Flyway Migrations | `V1__create_orders_table.sql`, `V2__create_order_items_table.sql` |
 
 ---
@@ -1381,5 +1382,9 @@ git commit -m "feat: criar order-service com Spring Boot 3.5
 4. **"Por que `ddl-auto: validate` com Flyway em vez de `update`?"** — `update` pode causar perda de dados em produção (ex: renomear coluna = dropar + criar). `validate` garante que as entidades JPA estão alinhadas com o banco. Flyway gerencia as migrations de forma versionada e rastreável.
 
 5. **"O que é o padrão Factory Method em entidades?"** — `Order.create(...)` é um factory method estático que encapsula a lógica de criação, garante invariantes (status PENDING, cálculo de total) e impede criação de objetos em estado inválido. Compila melhor que um construtor com muitos parâmetros.
+
+6. **"Explique Arquitetura Hexagonal (Ports & Adapters)."** — O domínio (hexágono interno) não conhece o mundo externo. Toda comunicação passa por **portas** (interfaces em `application/port/`) e **adaptadores** (implementações em `adapter/`). Adaptadores de entrada (controllers, listeners) chamam o app; adaptadores de saída (JPA, Kafka, Feign) são chamados pelo app. A dependência sempre aponta para dentro: `adapter → application → domain`. Isso permite trocar qualquer tecnologia sem alterar o domínio.
+
+7. **"Qual a diferença entre porta de entrada e porta de saída?"** — **Porta de entrada** (inbound port) define o que o app sabe fazer (ex: `CreateOrderUseCase`). **Porta de saída** (outbound port) define o que o app precisa do mundo externo (ex: `OrderRepository`, `OrderEventPublisher`). Adaptadores de entrada chamam portas de entrada; adaptadores de saída implementam portas de saída.
 
 > **Próximo passo:** [Fase 02 — Persistência](fase-02-persistencia.md) — aprofundaremos JPA, performance, queries customizadas e Flyway.

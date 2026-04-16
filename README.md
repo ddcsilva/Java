@@ -37,36 +37,36 @@ Projetado para demonstrar as competências exigidas em vagas enterprise de Java 
 
 ```
                             ┌─────────────────┐
-                            │   Cliente/App    │
+                            │   Cliente/App   │
                             └────────┬────────┘
                                      │ :8080
                             ┌────────▼────────┐
-                            │   API Gateway    │
-                            │ (Spring Cloud)   │
+                            │   API Gateway   │
+                            │ (Spring Cloud)  │
                             └────────┬────────┘
                                      │
                  ┌───────────────────┼───────────────────┐
-                 │                   │                     │
-        ┌────────▼──────┐  ┌────────▼──────┐   ┌─────────▼─────┐
-        │ order-service  │  │  restaurant-  │   │   payment-    │
-        │     :8081      │  │   service     │   │   service     │
-        │                │◄─┤    :8082      │   │    :8083      │
-        └───────┬────────┘  └───────────────┘   └───────┬───────┘
-                │   OpenFeign (REST síncrono)            │
-                │                                        │
-                │        ┌──────────────┐                │
-                └───────►│ Apache Kafka │◄───────────────┘
-                         │    (KRaft)   │
-                         └──────┬───────┘
-                                │
-                       ┌────────▼────────┐
-                       │  notification-  │
-                       │    service      │
-                       │     :8084       │
-                       └─────────────────┘
+                 │                   │                   │
+        ┌────────▼───────┐  ┌────────▼──────┐   ┌────────▼───────┐
+        │ order-service  │  │  restaurant-  │   │    payment-    │
+        │     :8081      │  │   service     │   │    service     │
+        │                │◄─┤    :8082      │   │     :8083      │
+        └────────┬───────┘  └───────────────┘   └──────────┬─────┘
+                 │   OpenFeign (REST síncrono)             │
+                 │                                         │
+                 │         ┌──────────────┐                │
+                 └────────►│ Apache Kafka │◄───────────────┘
+                           │    (KRaft)   │
+                           └──────┬───────┘
+                                  │
+                         ┌────────▼────────┐
+                         │  notification-  │
+                         │    service      │
+                         │     :8084       │
+                         └─────────────────┘
 ```
 
-**Padrões:** REST síncrono para queries (OpenFeign) · Eventos assíncronos para reações (Kafka) · Database-per-service · DDD + Clean Architecture
+**Padrões:** REST síncrono para queries (OpenFeign) · Eventos assíncronos para reações (Kafka) · Database-per-service · DDD + Arquitetura Hexagonal (Ports & Adapters)
 
 ---
 
@@ -195,17 +195,18 @@ foodhub/
 └── .github/workflows/          # CI/CD pipelines
 ```
 
-Cada microserviço segue Clean Architecture:
+Cada microserviço segue Arquitetura Hexagonal (Ports & Adapters):
 
 ```
 service/
-├── domain/           # Entidades, Value Objects, eventos (Java puro)
-├── application/      # DTOs, Use Cases, portas de saída
-├── infrastructure/   # JPA, Kafka, Feign, configs (implementações)
-└── api/              # Controllers, exception handlers (entrada HTTP)
+├── domain/           # Hexágono interno — Entidades, Value Objects, eventos (Java puro)
+├── application/      # Use Cases, DTOs, portas de entrada/saída (interfaces)
+└── adapter/          # Adaptadores concretos
+    ├── in/web/       # Controllers, exception handlers, segurança (entrada HTTP)
+    └── out/          # JPA, Kafka, Feign, configs (saída para infra)
 ```
 
-> **Regra de dependência:** `api → application → domain ← infrastructure`
+> **Regra de dependência:** `adapter.in → application → domain ← adapter.out`
 
 ---
 
@@ -213,9 +214,9 @@ service/
 
 | ADR | Decisão | Justificativa |
 |---|---|---|
-| **001** | REST síncrono + Kafka assíncrono | Queries precisam de resposta imediata; eventos permitem desacoplamento |
-| **002** | Database-per-service (PostgreSQL) | Autonomia, isolamento e desacoplamento entre serviços |
-| **003** | Flyway para migrations | Rastreabilidade, reprodutibilidade e rollback de schema |
+| **ADR-001** | REST síncrono + Kafka assíncrono | Queries precisam de resposta imediata; eventos permitem desacoplamento |
+| **ADR-002** | Database-per-service (PostgreSQL) | Autonomia, isolamento e desacoplamento entre serviços |
+| **ADR-003** | Flyway para migrations | Rastreabilidade, reprodutibilidade e rollback de schema |
 
 ---
 
@@ -281,7 +282,7 @@ Este projeto cobre **24 competências** exigidas em vagas enterprise Java:
 | 16 | Eureka | Service Discovery |
 | 17 | Spring Cloud Config | Configuração |
 | 18 | DDD | Rich Domain Model |
-| 19 | Clean Architecture | Camadas |
+| 19 | Arquitetura Hexagonal (Ports & Adapters) | Portas e Adaptadores |
 | 20 | SOLID + Clean Code | Código |
 | 21 | CI/CD | GitHub Actions |
 | 22 | Observabilidade | Metrics, tracing |

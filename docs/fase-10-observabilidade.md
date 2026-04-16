@@ -176,7 +176,7 @@ Com Actuator + Micrometer + Prometheus, você automaticamente tem:
 ### Métricas customizadas
 
 ```java
-package com.foodhub.order.infrastructure.metrics;
+package com.foodhub.order.adapter.out.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -650,7 +650,7 @@ management:
 | Grafana Dashboards | 10 | ✅ |
 | Distributed Tracing | 10 | ✅ |
 | Structured Logging | 10 | ✅ |
-| DDD / Clean Architecture | Todas | ✅ |
+| DDD / Arquitetura Hexagonal | Todas | ✅ |
 | SOLID Principles | Todas | ✅ |
 | Design Patterns (Factory, Strategy, Observer) | Todas | ✅ |
 | Maven | Todas | ✅ |

@@ -324,16 +324,16 @@ class OrderItemTest {
 ## 5.4 Testes Unitários — Application Service (Mockito)
 
 ```java
-package com.foodhub.order.application.service;
+package com.foodhub.order.application.usecase;
 
 import com.foodhub.order.application.dto.*;
 import com.foodhub.order.application.mapper.OrderMapper;
-import com.foodhub.order.application.port.OrderEventPublisher;
+import com.foodhub.order.application.port.out.OrderEventPublisher;
 import com.foodhub.order.domain.exception.OrderNotFoundException;
 import com.foodhub.order.domain.model.Order;
 import com.foodhub.order.domain.model.OrderItem;
 import com.foodhub.order.domain.model.OrderStatus;
-import com.foodhub.order.domain.repository.OrderRepository;
+import com.foodhub.order.application.port.out.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -465,13 +465,13 @@ class OrderApplicationServiceTest {
 `@WebMvcTest` carrega **apenas** o controller + filtros Spring MVC. Não precisa de banco, Kafka, etc.
 
 ```java
-package com.foodhub.order.api.controller;
+package com.foodhub.order.adapter.in.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodhub.order.application.dto.*;
-import com.foodhub.order.application.service.OrderApplicationService;
+import com.foodhub.order.application.usecase.OrderApplicationService;
 import com.foodhub.order.domain.exception.OrderNotFoundException;
-import com.foodhub.order.infrastructure.security.JwtService;
+import com.foodhub.order.adapter.in.web.security.JwtService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -615,7 +615,7 @@ A funcionalidade é idêntica — a diferença é que `@MockitoBean` está no **
 `@DataJpaTest` carrega **apenas** JPA: Hibernate, DataSource, repositories. Usa H2 in-memory por padrão, mas vamos usar Testcontainers para PostgreSQL real.
 
 ```java
-package com.foodhub.order.domain.repository;
+package com.foodhub.order.application.port.out;
 
 import com.foodhub.order.domain.model.Order;
 import com.foodhub.order.domain.model.OrderItem;
