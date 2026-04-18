@@ -186,10 +186,25 @@ Após gerar o projeto, o `pom.xml` terá a estrutura abaixo. Vou explicar cada s
                     </excludes>
                 </configuration>
             </plugin>
+            <!-- Configura o Lombok como annotation processor explicitamente -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
 ```
+
+> **Nota sobre o `maven-compiler-plugin`:** O Spring Initializr gera a configuração de `annotationProcessorPaths` com execuções separadas para `compile` e `testCompile`. A versão simplificada acima (com `<configuration>` global) produz o mesmo resultado. Essa configuração garante que o Lombok processe as annotations durante a compilação — sem ela, o Maven **pode** descobrir o Lombok automaticamente no classpath (na versão 3.14.x do plugin), mas declarar explicitamente é a prática recomendada e à prova de futuras mudanças.
 
 ### Entendendo as versões
 
@@ -278,20 +293,27 @@ Para ativar: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
 
 ## 1.4 Criar o Banco de Dados
 
-Antes de rodar o serviço, crie o banco no PostgreSQL:
+Antes de rodar o serviço, você precisa de um PostgreSQL rodando com o banco `foodhub_orders`. A forma mais prática é via **Docker**.
 
-```sql
--- Conecte no PostgreSQL como superuser
-CREATE DATABASE foodhub_orders;
-CREATE USER foodhub WITH PASSWORD 'foodhub123';
-GRANT ALL PRIVILEGES ON DATABASE foodhub_orders TO foodhub;
+### Pré-requisito: Docker
 
--- Conecte no banco foodhub_orders e garanta permissões no schema public
-\c foodhub_orders
-GRANT ALL ON SCHEMA public TO foodhub;
+Verifique se o Docker está instalado:
+
+```bash
+docker --version
+# Esperado: Docker version 2x.x.x ou superior
 ```
 
-Ou via Docker (se ainda não estiver rodando):
+Se não estiver instalado:
+- **Windows:** Instale o [Docker Desktop](https://www.docker.com/products/docker-desktop/) (requer WSL 2 habilitado)
+- **Linux:** `sudo apt install docker.io` ou siga a [documentação oficial](https://docs.docker.com/engine/install/)
+- **macOS:** Instale o [Docker Desktop para Mac](https://www.docker.com/products/docker-desktop/)
+
+> **Nota Windows:** Após instalar o Docker Desktop, reinicie o computador. Verifique nas configurações que o backend WSL 2 está ativo (Settings → General → "Use the WSL 2 based engine").
+
+### Opção A: Docker (recomendada)
+
+Execute o comando abaixo para criar o container PostgreSQL:
 
 ```bash
 docker run -d \
@@ -300,8 +322,150 @@ docker run -d \
   -e POSTGRES_USER=foodhub \
   -e POSTGRES_PASSWORD=foodhub123 \
   -e POSTGRES_DB=foodhub_orders \
+  -v foodhub-pgdata:/var/lib/postgresql/data \
   postgres:16-alpine
 ```
+
+**Explicação de cada flag:**
+
+| Flag | Explicação |
+|---|---|
+| `-d` | Executa em modo **detached** (background) — o terminal fica livre |
+| `--name foodhub-postgres` | Nome do container para referência futura |
+| `-p 5432:5432` | Mapeia a porta 5432 do container para a porta 5432 do host |
+| `-e POSTGRES_USER=foodhub` | Cria o usuário `foodhub` como superuser do banco |
+| `-e POSTGRES_PASSWORD=foodhub123` | Senha do usuário (⚠️ apenas para desenvolvimento!) |
+| `-e POSTGRES_DB=foodhub_orders` | Cria o banco `foodhub_orders` automaticamente na inicialização |
+| `-v foodhub-pgdata:/var/lib/...` | **Volume nomeado** — persiste os dados mesmo se o container for removido |
+| `postgres:16-alpine` | Imagem oficial do PostgreSQL 16 (Alpine = imagem leve, ~80MB) |
+
+### Verificando se o container está rodando
+
+```bash
+# Ver status do container
+docker ps --filter "name=foodhub-postgres"
+
+# Saída esperada:
+# NAMES              STATUS         PORTS
+# foodhub-postgres   Up X minutes   0.0.0.0:5432->5432/tcp
+```
+
+### Testando a conexão
+
+```bash
+# Executa psql dentro do container para verificar o banco
+docker exec foodhub-postgres psql -U foodhub -d foodhub_orders -c "SELECT version();"
+
+# Saída esperada:
+# PostgreSQL 16.x on x86_64-pc-linux-musl...
+```
+
+### Comandos úteis do dia a dia
+
+```bash
+# Parar o container (dados são preservados no volume)
+docker stop foodhub-postgres
+
+# Iniciar novamente
+docker start foodhub-postgres
+
+# Ver logs do PostgreSQL (útil para debug de conexão)
+docker logs foodhub-postgres
+
+# Abrir um terminal psql interativo
+docker exec -it foodhub-postgres psql -U foodhub -d foodhub_orders
+
+# Remover o container (dados permanecem no volume foodhub-pgdata)
+docker rm -f foodhub-postgres
+
+# Recriar o container (reusa os dados do volume)
+docker run -d --name foodhub-postgres -p 5432:5432 \
+  -e POSTGRES_USER=foodhub -e POSTGRES_PASSWORD=foodhub123 \
+  -e POSTGRES_DB=foodhub_orders \
+  -v foodhub-pgdata:/var/lib/postgresql/data \
+  postgres:16-alpine
+
+# ⚠️ Para apagar TUDO (dados inclusos) — usar apenas se quiser resetar
+docker rm -f foodhub-postgres
+docker volume rm foodhub-pgdata
+```
+
+> **Por que volume nomeado (`-v foodhub-pgdata:...`) e não bind mount?** — Volumes nomeados são gerenciados pelo Docker, funcionam igual em todos os SOs, e não dependem de um diretório local. Bind mounts (`-v ./pgdata:/var/lib/...`) podem ter problemas de permissão no Linux e performance ruim no Windows/macOS.
+
+### Opção B: PostgreSQL nativo (sem Docker)
+
+Se preferir instalar o PostgreSQL diretamente:
+
+1. Instale o PostgreSQL 16+ ([download](https://www.postgresql.org/download/))
+2. Conecte como superuser e execute:
+
+```sql
+CREATE DATABASE foodhub_orders;
+CREATE USER foodhub WITH PASSWORD 'foodhub123';
+GRANT ALL PRIVILEGES ON DATABASE foodhub_orders TO foodhub;
+
+-- Conecte no banco e garanta permissões no schema public
+\c foodhub_orders
+GRANT ALL ON SCHEMA public TO foodhub;
+```
+
+### Troubleshooting
+
+| Problema | Causa | Solução |
+|---|---|---|
+| `port is already allocated` | Outra instância PostgreSQL na porta 5432 | Pare a outra instância ou mude a porta: `-p 5433:5432` (atualize `application.yml` também) |
+| `password authentication failed` | Credenciais incorretas ou volume com dados antigos | Verifique as vars `-e POSTGRES_USER` e `-e POSTGRES_PASSWORD`. Se persistir, recrie o volume: `docker rm -f foodhub-postgres; docker volume rm foodhub-pgdata` e execute o `docker run` novamente |
+| Container para imediatamente | Erro na inicialização do PG | Execute `docker logs foodhub-postgres` para ver o erro |
+| `Connection refused` no Spring Boot | Container não está rodando | Execute `docker start foodhub-postgres` e aguarde ~2s |
+| `password authentication failed` mesmo com Docker OK | PostgreSQL **local** instalado na mesma porta 5432 | O Spring Boot conecta no PG local em vez do Docker. Veja a seção abaixo |
+
+### Conflito com PostgreSQL local instalado no Windows
+
+Se você tem o PostgreSQL instalado diretamente no Windows (ex: PostgreSQL 18 via instalador), ele roda como **serviço do Windows** na porta 5432 — a mesma porta do container Docker. Quando o Spring Boot tenta conectar em `localhost:5432`, ele pode conectar no PG local (que tem credenciais diferentes) em vez do Docker.
+
+**Diagnóstico:**
+
+```powershell
+# Verifica se há um serviço PostgreSQL local rodando
+Get-Service -Name "postgresql*"
+
+# Verifica quais processos estão na porta 5432
+netstat -aon | Select-String ":5432"
+```
+
+**Solução: parar o serviço local**
+
+```powershell
+# Requer terminal como Administrador (ou via UAC)
+Stop-Service postgresql-x64-18       # Ajuste o nome conforme sua versão
+Set-Service postgresql-x64-18 -StartupType Manual  # Evita iniciar automaticamente com o Windows
+```
+
+Ou de um terminal normal (abre UAC automaticamente):
+
+```powershell
+Start-Process powershell -Verb RunAs -ArgumentList '-Command', 'Stop-Service postgresql-x64-18; Set-Service postgresql-x64-18 -StartupType Manual' -Wait
+```
+
+Para restaurar depois: `Start-Service postgresql-x64-18`
+
+### Script de automação: `dev-env.ps1`
+
+O projeto inclui um script PowerShell na raiz ([dev-env.ps1](../../dev-env.ps1)) que automatiza todo o setup do ambiente de desenvolvimento:
+
+```powershell
+# Iniciar o ambiente (para PG local, inicia Docker, configura variáveis)
+.\dev-env.ps1
+
+# Parar o ambiente (para Docker, restaura PG local)
+.\dev-env.ps1 -Stop
+```
+
+O script faz:
+1. Detecta e para o PostgreSQL local (se estiver rodando na porta 5432)
+2. Cria ou inicia o container `foodhub-postgres`
+3. Aguarda o PostgreSQL aceitar conexões
+4. Configura `JAVA_HOME`, `MAVEN_HOME` e `PATH` no terminal atual
 
 ---
 

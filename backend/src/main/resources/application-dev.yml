@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    show-sql: true
+  
+  flyway:
+    clean-disabled: false  # Permite rodar flyway:clean em dev (NUNCA em prod)
+
+logging:
+  level:
+    com.foodhub: DEBUG
+    org.springframework.web: DEBUG

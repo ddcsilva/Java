@@ -8,10 +8,21 @@
 
 ```
 docs/
-├── backend/     ← Microserviços Java Spring Boot (11 fases)
-├── frontend/    ← SPA React + TypeScript (11 fases)
-└── README.md    ← Este arquivo
+├── backend/                         ← Microserviços Java Spring Boot (11 fases)
+├── frontend/                        ← SPA React + TypeScript (11 fases)
+├── guia-inicializacao-vscode.md     ← Setup do VS Code + Debug
+└── README.md                        ← Este arquivo
 ```
+
+---
+
+## 🚀 Começando
+
+Antes de mergulhar nas fases, configure seu ambiente de desenvolvimento:
+
+📖 **[Guia de Inicialização — VS Code →](guia-inicializacao-vscode.md)**
+
+> Extensões, configuração, compilação, execução e debug completo.
 
 ---
 
